@@ -31,8 +31,8 @@ export function LanguageSwitcher({ compact = false }: { compact?: boolean }) {
       <button
         onClick={() => setOpen((v) => !v)}
         className={cn(
-          "flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-sm font-medium transition hover:bg-black/5",
-          compact ? "text-slate-700" : "text-inherit",
+          "flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-sm font-medium transition hover:bg-white/10",
+          compact ? "text-slate-200" : "text-inherit",
         )}
         aria-haspopup="listbox"
         aria-expanded={open}
@@ -43,7 +43,7 @@ export function LanguageSwitcher({ compact = false }: { compact?: boolean }) {
       </button>
 
       {open && (
-        <div className="absolute right-0 z-50 mt-2 w-44 overflow-hidden rounded-xl border border-[var(--border)] bg-white p-1 shadow-xl">
+        <div className="absolute right-0 z-50 mt-2 w-44 overflow-hidden rounded-xl border border-[var(--border)] bg-surface p-1 shadow-xl">
           {options.map((o) => (
             <button
               key={o.code}
@@ -52,12 +52,12 @@ export function LanguageSwitcher({ compact = false }: { compact?: boolean }) {
                 setOpen(false);
               }}
               className={cn(
-                "flex w-full items-center justify-between rounded-lg px-3 py-2 text-sm text-slate-700 transition hover:bg-slate-50",
-                o.code === locale && "font-semibold text-brand-700",
+                "flex w-full items-center justify-between rounded-lg px-3 py-2 text-sm text-slate-200 transition hover:bg-white/5",
+                o.code === locale && "font-semibold text-brand-300",
               )}
             >
               <span>{o.label}</span>
-              {o.code === locale && <Check size={15} className="text-brand-600" />}
+              {o.code === locale && <Check size={15} className="text-brand-400" />}
             </button>
           ))}
         </div>

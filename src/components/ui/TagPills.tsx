@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 
 const styles: Record<ProductTag, string> = {
   new: "bg-brand-600 text-white",
-  hit: "bg-amber-400 text-slate-900",
+  hit: "bg-amber-400 text-white",
   sale: "bg-rose-500 text-white",
 };
 

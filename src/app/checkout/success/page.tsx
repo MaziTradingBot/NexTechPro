@@ -22,39 +22,39 @@ function SuccessContent() {
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
           transition={{ type: "spring", stiffness: 260, damping: 18 }}
-          className="mx-auto grid h-20 w-20 place-items-center rounded-full bg-emerald-100 text-emerald-600"
+          className="mx-auto grid h-20 w-20 place-items-center rounded-full bg-emerald-500/15 text-emerald-400"
         >
           <CheckCircle2 size={44} />
         </motion.span>
 
-        <h1 className="mt-6 text-3xl font-extrabold tracking-tight text-slate-900">
+        <h1 className="mt-6 text-3xl font-extrabold tracking-tight text-white">
           {t("success.title")}
         </h1>
-        <p className="mt-3 text-slate-500">{t("success.subtitle")}</p>
+        <p className="mt-3 text-slate-400">{t("success.subtitle")}</p>
 
-        <div className="mt-8 rounded-2xl border border-[var(--border)] bg-white p-6 text-left">
+        <div className="mt-8 rounded-2xl border border-[var(--border)] bg-surface p-6 text-left">
           <div className="flex items-center justify-between border-b border-[var(--border)] pb-4">
-            <div className="flex items-center gap-2 text-sm text-slate-500">
+            <div className="flex items-center gap-2 text-sm text-slate-400">
               <Package size={16} /> {t("success.orderNumber")}
             </div>
-            <span className="font-mono text-lg font-bold text-brand-700">{orderId}</span>
+            <span className="font-mono text-lg font-bold text-brand-300">{orderId}</span>
           </div>
 
           <div className="flex items-center justify-between py-4">
-            <div className="flex items-center gap-2 text-sm text-slate-500">
+            <div className="flex items-center gap-2 text-sm text-slate-400">
               <Truck size={16} /> {t("success.estDelivery")}
             </div>
-            <span className="font-semibold text-slate-900">{t("success.days")}</span>
+            <span className="font-semibold text-white">{t("success.days")}</span>
           </div>
 
           {order && (
             <div className="space-y-2 border-t border-[var(--border)] pt-4 text-sm">
               {order.items.map((it) => (
-                <div key={it.productId} className="flex justify-between text-slate-600">
+                <div key={it.productId} className="flex justify-between text-slate-300">
                   <span className="line-clamp-1">
                     {it.name} × {it.qty}
                   </span>
-                  <span className="font-medium text-slate-900">
+                  <span className="font-medium text-white">
                     {formatPrice(it.price * it.qty, locale)}
                   </span>
                 </div>
@@ -64,7 +64,7 @@ function SuccessContent() {
                 <span>{formatPrice(order.total, locale)}</span>
               </div>
               {order.payment === "card-prepay" && (
-                <div className="mt-2 rounded-lg bg-brand-50 p-2.5 text-xs text-brand-800">
+                <div className="mt-2 rounded-lg bg-brand-500/10 p-2.5 text-xs text-brand-200">
                   {t("checkout.payNow")}: <b>{formatPrice(order.prepaid, locale)}</b> ·{" "}
                   {t("checkout.remaining")}: <b>{formatPrice(order.remaining, locale)}</b>
                 </div>
@@ -82,7 +82,7 @@ function SuccessContent() {
           </Link>
           <Link
             href="/"
-            className="inline-flex items-center justify-center rounded-xl border border-[var(--border)] bg-white px-6 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+            className="inline-flex items-center justify-center rounded-xl border border-[var(--border)] bg-surface px-6 py-3 text-sm font-semibold text-slate-200 hover:bg-white/5"
           >
             {t("success.backHome")}
           </Link>

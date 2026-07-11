@@ -17,19 +17,27 @@ export function Newsletter() {
   };
 
   return (
-    <section className="wrap pb-4">
-      <div className="rounded-3xl border border-[var(--border)] bg-gradient-to-br from-brand-50 to-white p-8 sm:p-12">
+    <section className="relative overflow-hidden bg-ink-950 py-16">
+      <div
+        className="absolute inset-0"
+        style={{
+          backgroundImage:
+            "radial-gradient(70% 120% at 50% 0%, rgba(34,211,238,0.14), transparent 60%)",
+        }}
+        aria-hidden
+      />
+      <div className="wrap relative">
         <div className="mx-auto max-w-2xl text-center">
           <span className="mx-auto grid h-12 w-12 place-items-center rounded-2xl brand-gradient text-white">
             <Mail size={22} />
           </span>
-          <h2 className="mt-5 text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl">
+          <h2 className="mt-5 text-2xl font-extrabold tracking-tight text-white sm:text-3xl">
             {t("newsletter.title")}
           </h2>
-          <p className="mt-2 text-slate-500">{t("newsletter.subtitle")}</p>
+          <p className="mt-2 text-slate-400">{t("newsletter.subtitle")}</p>
 
           {done ? (
-            <p className="mt-6 inline-flex items-center gap-2 rounded-xl bg-emerald-50 px-5 py-3 text-sm font-semibold text-emerald-700">
+            <p className="mt-6 inline-flex items-center gap-2 rounded-xl bg-emerald-500/10 px-5 py-3 text-sm font-semibold text-emerald-400">
               <Check size={18} /> {t("newsletter.success")}
             </p>
           ) : (
@@ -40,16 +48,17 @@ export function Newsletter() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder={t("newsletter.placeholder")}
-                className="h-12 flex-1 rounded-xl border border-[var(--border)] bg-white px-4 text-sm outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
+                className="h-12 flex-1 rounded-xl border border-white/10 bg-white/5 px-4 text-sm text-white placeholder:text-slate-500 outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30"
               />
               <button
                 type="submit"
-                className="h-12 rounded-xl bg-brand-600 px-6 text-sm font-semibold text-white transition hover:bg-brand-700"
+                className="h-12 rounded-xl brand-gradient px-6 text-sm font-semibold text-white transition hover:opacity-90"
               >
                 {t("newsletter.button")}
               </button>
             </form>
           )}
+          <p className="mt-4 text-xs text-slate-500">{t("newsletter.noSpam")}</p>
         </div>
       </div>
     </section>

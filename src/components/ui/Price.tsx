@@ -18,11 +18,11 @@ export function Price({
   const { locale } = useI18n();
   return (
     <span className="inline-flex items-baseline gap-2">
-      <span className={cn("font-semibold tracking-tight", className)}>
+      <span className={cn("font-bold tracking-tight text-brand-400", className)}>
         {formatPrice(value, locale)}
       </span>
       {oldValue && oldValue > value && (
-        <span className={cn("text-sm text-slate-400 line-through", oldClassName)}>
+        <span className={cn("text-sm text-slate-500 line-through", oldClassName)}>
           {formatPrice(oldValue, locale)}
         </span>
       )}

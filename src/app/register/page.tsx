@@ -48,9 +48,9 @@ export default function RegisterPage() {
   return (
     <div className="wrap flex justify-center py-14">
       <div className="w-full max-w-md">
-        <div className="rounded-3xl border border-[var(--border)] bg-white p-8 shadow-sm">
-          <h1 className="text-2xl font-extrabold tracking-tight text-slate-900">{t("auth.registerTitle")}</h1>
-          <p className="mt-1.5 text-sm text-slate-500">{t("auth.registerSubtitle")}</p>
+        <div className="rounded-3xl border border-[var(--border)] bg-surface p-8 shadow-sm">
+          <h1 className="text-2xl font-extrabold tracking-tight text-white">{t("auth.registerTitle")}</h1>
+          <p className="mt-1.5 text-sm text-slate-400">{t("auth.registerSubtitle")}</p>
 
           <div className="mt-6">
             <GoogleButton onClick={google} />
@@ -64,7 +64,7 @@ export default function RegisterPage() {
 
           <form onSubmit={submit} className="space-y-4">
             <div>
-              <label className="mb-1.5 block text-sm font-medium text-slate-600">{t("auth.name")}</label>
+              <label className="mb-1.5 block text-sm font-medium text-slate-300">{t("auth.name")}</label>
               <div className="relative">
                 <User size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
                 <input
@@ -74,13 +74,13 @@ export default function RegisterPage() {
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Ivan Shevchenko"
                   autoComplete="name"
-                  className="h-12 w-full rounded-xl border border-[var(--border)] bg-white pl-10 pr-3 text-sm outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
+                  className="h-12 w-full rounded-xl border border-[var(--border)] bg-surface pl-10 pr-3 text-sm outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30"
                 />
               </div>
             </div>
 
             <div>
-              <label className="mb-1.5 block text-sm font-medium text-slate-600">{t("auth.email")}</label>
+              <label className="mb-1.5 block text-sm font-medium text-slate-300">{t("auth.email")}</label>
               <div className="relative">
                 <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
                 <input
@@ -90,7 +90,7 @@ export default function RegisterPage() {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@email.com"
                   autoComplete="email"
-                  className="h-12 w-full rounded-xl border border-[var(--border)] bg-white pl-10 pr-3 text-sm outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
+                  className="h-12 w-full rounded-xl border border-[var(--border)] bg-surface pl-10 pr-3 text-sm outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30"
                 />
               </div>
             </div>
@@ -111,7 +111,7 @@ export default function RegisterPage() {
             />
 
             {error && (
-              <p className="rounded-xl bg-rose-50 px-4 py-3 text-sm font-medium text-rose-600">{error}</p>
+              <p className="rounded-xl bg-rose-500/10 px-4 py-3 text-sm font-medium text-rose-400">{error}</p>
             )}
 
             <button
@@ -122,9 +122,9 @@ export default function RegisterPage() {
             </button>
           </form>
 
-          <p className="mt-6 text-center text-sm text-slate-500">
+          <p className="mt-6 text-center text-sm text-slate-400">
             {t("auth.haveAccount")}{" "}
-            <Link href="/login" className="font-semibold text-brand-700 hover:text-brand-800">
+            <Link href="/login" className="font-semibold text-brand-300 hover:text-brand-200">
               {t("auth.signIn")}
             </Link>
           </p>

@@ -33,7 +33,7 @@ export function FeaturedProducts() {
               "rounded-full px-4 py-2 text-sm font-semibold transition",
               active === tb.id
                 ? "bg-brand-600 text-white shadow-sm"
-                : "bg-white text-slate-600 border border-[var(--border)] hover:border-brand-300 hover:text-brand-700",
+                : "bg-surface text-slate-300 border border-[var(--border)] hover:border-brand-300 hover:text-brand-300",
             )}
           >
             {t(tb.labelKey)}

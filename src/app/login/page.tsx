@@ -37,9 +37,9 @@ export default function LoginPage() {
   return (
     <div className="wrap flex justify-center py-14">
       <div className="w-full max-w-md">
-        <div className="rounded-3xl border border-[var(--border)] bg-white p-8 shadow-sm">
-          <h1 className="text-2xl font-extrabold tracking-tight text-slate-900">{t("auth.loginTitle")}</h1>
-          <p className="mt-1.5 text-sm text-slate-500">{t("auth.loginSubtitle")}</p>
+        <div className="rounded-3xl border border-[var(--border)] bg-surface p-8 shadow-sm">
+          <h1 className="text-2xl font-extrabold tracking-tight text-white">{t("auth.loginTitle")}</h1>
+          <p className="mt-1.5 text-sm text-slate-400">{t("auth.loginSubtitle")}</p>
 
           <div className="mt-6">
             <GoogleButton onClick={google} />
@@ -53,7 +53,7 @@ export default function LoginPage() {
 
           <form onSubmit={submit} className="space-y-4">
             <div>
-              <label className="mb-1.5 block text-sm font-medium text-slate-600">{t("auth.email")}</label>
+              <label className="mb-1.5 block text-sm font-medium text-slate-300">{t("auth.email")}</label>
               <div className="relative">
                 <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
                 <input
@@ -63,7 +63,7 @@ export default function LoginPage() {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@email.com"
                   autoComplete="email"
-                  className="h-12 w-full rounded-xl border border-[var(--border)] bg-white pl-10 pr-3 text-sm outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
+                  className="h-12 w-full rounded-xl border border-[var(--border)] bg-surface pl-10 pr-3 text-sm outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30"
                 />
               </div>
             </div>
@@ -77,13 +77,13 @@ export default function LoginPage() {
             />
 
             <div className="flex justify-end">
-              <Link href="#" className="text-sm font-medium text-brand-700 hover:text-brand-800">
+              <Link href="#" className="text-sm font-medium text-brand-300 hover:text-brand-200">
                 {t("auth.forgot")}
               </Link>
             </div>
 
             {error && (
-              <p className="rounded-xl bg-rose-50 px-4 py-3 text-sm font-medium text-rose-600">{error}</p>
+              <p className="rounded-xl bg-rose-500/10 px-4 py-3 text-sm font-medium text-rose-400">{error}</p>
             )}
 
             <button
@@ -94,9 +94,9 @@ export default function LoginPage() {
             </button>
           </form>
 
-          <p className="mt-6 text-center text-sm text-slate-500">
+          <p className="mt-6 text-center text-sm text-slate-400">
             {t("auth.noAccount")}{" "}
-            <Link href="/register" className="font-semibold text-brand-700 hover:text-brand-800">
+            <Link href="/register" className="font-semibold text-brand-300 hover:text-brand-200">
               {t("auth.signUp")}
             </Link>
           </p>

@@ -183,11 +183,11 @@ export default function CheckoutPage() {
   if (mounted && lines.length === 0) {
     return (
       <div className="wrap py-20">
-        <div className="mx-auto max-w-md rounded-3xl border border-[var(--border)] bg-white p-10 text-center">
-          <span className="mx-auto grid h-16 w-16 place-items-center rounded-2xl bg-brand-50 text-brand-600">
+        <div className="mx-auto max-w-md rounded-3xl border border-[var(--border)] bg-surface p-10 text-center">
+          <span className="mx-auto grid h-16 w-16 place-items-center rounded-2xl bg-brand-500/10 text-brand-400">
             <ShoppingBag size={30} />
           </span>
-          <h1 className="mt-5 text-2xl font-bold text-slate-900">{t("cart.empty")}</h1>
+          <h1 className="mt-5 text-2xl font-bold text-white">{t("cart.empty")}</h1>
           <Link
             href="/catalog"
             className="mt-6 inline-flex rounded-xl bg-brand-600 px-6 py-3 text-sm font-semibold text-white hover:bg-brand-700"
@@ -201,9 +201,9 @@ export default function CheckoutPage() {
 
   return (
     <div className="wrap py-8">
-      <h1 className="text-3xl font-extrabold tracking-tight text-slate-900">{t("checkout.title")}</h1>
-      <p className="mt-2 flex items-start gap-2 text-sm text-slate-500">
-        <BadgePercent size={16} className="mt-0.5 shrink-0 text-brand-600" />
+      <h1 className="text-3xl font-extrabold tracking-tight text-white">{t("checkout.title")}</h1>
+      <p className="mt-2 flex items-start gap-2 text-sm text-slate-400">
+        <BadgePercent size={16} className="mt-0.5 shrink-0 text-brand-400" />
         {t("checkout.guestNote")}
       </p>
 
@@ -253,7 +253,7 @@ export default function CheckoutPage() {
                 <select
                   value={form.country}
                   onChange={(e) => set("country", e.target.value)}
-                  className="h-12 w-full rounded-xl border border-[var(--border)] bg-white px-3 text-sm outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
+                  className="h-12 w-full rounded-xl border border-[var(--border)] bg-surface px-3 text-sm outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30"
                 >
                   <option>Ukraine</option>
                   <option>Poland</option>
@@ -266,7 +266,7 @@ export default function CheckoutPage() {
                   value={form.region}
                   onChange={(e) => set("region", e.target.value)}
                   className={cn(
-                    "h-12 w-full rounded-xl border bg-white px-3 text-sm outline-none focus:ring-2 focus:ring-brand-100",
+                    "h-12 w-full rounded-xl border bg-surface px-3 text-sm outline-none focus:ring-2 focus:ring-brand-500/30",
                     errors.region ? "border-rose-400" : "border-[var(--border)] focus:border-brand-500",
                   )}
                 >
@@ -360,8 +360,8 @@ export default function CheckoutPage() {
 
         {/* summary */}
         <div className="lg:sticky lg:top-40 lg:self-start">
-          <div className="rounded-2xl border border-[var(--border)] bg-white p-6">
-            <h2 className="text-lg font-bold text-slate-900">{t("checkout.orderSummary")}</h2>
+          <div className="rounded-2xl border border-[var(--border)] bg-surface p-6">
+            <h2 className="text-lg font-bold text-white">{t("checkout.orderSummary")}</h2>
 
             <div className="mt-4 max-h-64 space-y-3 overflow-y-auto pr-1">
               {lines.map(({ item, product }) => (
@@ -372,10 +372,10 @@ export default function CheckoutPage() {
                       {item.qty}
                     </span>
                   </div>
-                  <span className="line-clamp-2 flex-1 text-xs font-medium text-slate-700">
+                  <span className="line-clamp-2 flex-1 text-xs font-medium text-slate-200">
                     {product!.name}
                   </span>
-                  <span className="text-sm font-semibold text-slate-900">
+                  <span className="text-sm font-semibold text-white">
                     {formatPrice(product!.price * item.qty, locale)}
                   </span>
                 </div>
@@ -384,15 +384,15 @@ export default function CheckoutPage() {
 
             <dl className="mt-5 space-y-2.5 border-t border-[var(--border)] pt-4 text-sm">
               <Row label={t("cart.subtotal")} value={formatPrice(subtotal, locale)} />
-              <Row label={t("cart.delivery")} value={t("common.free")} valueClass="text-emerald-600" />
+              <Row label={t("cart.delivery")} value={t("common.free")} valueClass="text-emerald-400" />
               <div className="flex items-baseline justify-between border-t border-[var(--border)] pt-3">
-                <dt className="font-semibold text-slate-900">{t("cart.total")}</dt>
-                <dd className="text-xl font-bold text-slate-900">{formatPrice(total, locale)}</dd>
+                <dt className="font-semibold text-white">{t("cart.total")}</dt>
+                <dd className="text-xl font-bold text-white">{formatPrice(total, locale)}</dd>
               </div>
 
               {form.payment === "card-prepay" && (
-                <div className="mt-2 space-y-1.5 rounded-xl bg-brand-50 p-3">
-                  <Row label={t("checkout.payNow")} value={formatPrice(prepaid, locale)} valueClass="text-brand-800 font-bold" />
+                <div className="mt-2 space-y-1.5 rounded-xl bg-brand-500/10 p-3">
+                  <Row label={t("checkout.payNow")} value={formatPrice(prepaid, locale)} valueClass="text-brand-200 font-bold" />
                   <Row label={t("checkout.remaining")} value={formatPrice(remaining, locale)} />
                 </div>
               )}
@@ -421,8 +421,8 @@ export default function CheckoutPage() {
 /* ---- sub-components ---- */
 function Section({ step, title, children }: { step: string; title: string; children: React.ReactNode }) {
   return (
-    <section className="rounded-2xl border border-[var(--border)] bg-white p-5 sm:p-6">
-      <h2 className="mb-5 flex items-center gap-3 text-lg font-bold text-slate-900">
+    <section className="rounded-2xl border border-[var(--border)] bg-surface p-5 sm:p-6">
+      <h2 className="mb-5 flex items-center gap-3 text-lg font-bold text-white">
         <span className="grid h-7 w-7 place-items-center rounded-full bg-brand-600 text-sm text-white">
           {step}
         </span>
@@ -434,7 +434,7 @@ function Section({ step, title, children }: { step: string; title: string; child
 }
 
 function FieldLabel({ children, className }: { children: React.ReactNode; className?: string }) {
-  return <label className={cn("mb-1.5 block text-sm font-medium text-slate-600", className)}>{children}</label>;
+  return <label className={cn("mb-1.5 block text-sm font-medium text-slate-300", className)}>{children}</label>;
 }
 
 function ErrorText({ children }: { children: React.ReactNode }) {
@@ -469,7 +469,7 @@ function Field({
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         className={cn(
-          "h-12 w-full rounded-xl border bg-white px-3.5 text-sm outline-none focus:ring-2 focus:ring-brand-100",
+          "h-12 w-full rounded-xl border bg-surface px-3.5 text-sm outline-none focus:ring-2 focus:ring-brand-500/30",
           error ? "border-rose-400" : "border-[var(--border)] focus:border-brand-500",
         )}
       />
@@ -497,17 +497,17 @@ function CarrierOption({
       onClick={onClick}
       className={cn(
         "flex items-center gap-3 rounded-xl border p-4 text-left transition",
-        selected ? "border-brand-600 bg-brand-50/60 ring-1 ring-brand-200" : "border-[var(--border)] hover:border-brand-300",
+        selected ? "border-brand-600 bg-brand-500/15 ring-1 ring-brand-200" : "border-[var(--border)] hover:border-brand-300",
       )}
     >
-      <span className={cn("grid h-10 w-10 place-items-center rounded-lg", selected ? "bg-brand-600 text-white" : "bg-slate-100 text-slate-500")}>
+      <span className={cn("grid h-10 w-10 place-items-center rounded-lg", selected ? "bg-brand-600 text-white" : "bg-white/10 text-slate-400")}>
         {icon}
       </span>
       <span className="flex-1">
-        <span className="block text-sm font-semibold text-slate-900">{title}</span>
-        <span className="block text-xs text-slate-500">{subtitle}</span>
+        <span className="block text-sm font-semibold text-white">{title}</span>
+        <span className="block text-xs text-slate-400">{subtitle}</span>
       </span>
-      <span className={cn("grid h-5 w-5 place-items-center rounded-full border-2", selected ? "border-brand-600 bg-brand-600" : "border-slate-300")}>
+      <span className={cn("grid h-5 w-5 place-items-center rounded-full border-2", selected ? "border-brand-600 bg-brand-600" : "border-white/15")}>
         {selected && <Check size={12} className="text-white" />}
       </span>
     </button>
@@ -533,17 +533,17 @@ function PaymentOption({
       onClick={onClick}
       className={cn(
         "flex w-full items-start gap-3 rounded-xl border p-4 text-left transition",
-        selected ? "border-brand-600 bg-brand-50/60 ring-1 ring-brand-200" : "border-[var(--border)] hover:border-brand-300",
+        selected ? "border-brand-600 bg-brand-500/15 ring-1 ring-brand-200" : "border-[var(--border)] hover:border-brand-300",
       )}
     >
-      <span className={cn("grid h-10 w-10 shrink-0 place-items-center rounded-lg", selected ? "bg-brand-600 text-white" : "bg-slate-100 text-slate-500")}>
+      <span className={cn("grid h-10 w-10 shrink-0 place-items-center rounded-lg", selected ? "bg-brand-600 text-white" : "bg-white/10 text-slate-400")}>
         {icon}
       </span>
       <span className="flex-1">
-        <span className="block text-sm font-semibold text-slate-900">{title}</span>
-        <span className="mt-0.5 block text-xs leading-relaxed text-slate-500">{desc}</span>
+        <span className="block text-sm font-semibold text-white">{title}</span>
+        <span className="mt-0.5 block text-xs leading-relaxed text-slate-400">{desc}</span>
       </span>
-      <span className={cn("mt-1 grid h-5 w-5 shrink-0 place-items-center rounded-full border-2", selected ? "border-brand-600 bg-brand-600" : "border-slate-300")}>
+      <span className={cn("mt-1 grid h-5 w-5 shrink-0 place-items-center rounded-full border-2", selected ? "border-brand-600 bg-brand-600" : "border-white/15")}>
         {selected && <Check size={12} className="text-white" />}
       </span>
     </button>
@@ -553,8 +553,8 @@ function PaymentOption({
 function Row({ label, value, valueClass }: { label: string; value: string; valueClass?: string }) {
   return (
     <div className="flex justify-between">
-      <dt className="text-slate-500">{label}</dt>
-      <dd className={cn("font-semibold text-slate-900", valueClass)}>{value}</dd>
+      <dt className="text-slate-400">{label}</dt>
+      <dd className={cn("font-semibold text-white", valueClass)}>{value}</dd>
     </div>
   );
 }

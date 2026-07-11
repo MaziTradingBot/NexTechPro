@@ -18,6 +18,9 @@ export const en = {
     accessories: "Accessories",
     deals: "Deals",
     support: "Support",
+    hotDeals: "Hot Deals",
+    newArrivals: "New Arrivals",
+    brands: "Brands",
   },
   common: {
     search: "Search",
@@ -67,6 +70,17 @@ export const en = {
     color: "Color",
     save: "Save",
     months: "months",
+    leftInStock: "left in stock",
+  },
+  flash: {
+    title: "Flash Deals",
+    endsIn: "Ends in",
+    hrs: "HRS",
+    min: "MIN",
+    sec: "SEC",
+  },
+  brandsSection: {
+    title: "Our brands",
   },
   sort: {
     popular: "Popular",
@@ -146,16 +160,20 @@ export const en = {
     tabDeals: "Best deals",
   },
   promo: {
-    title: "Build your dream gaming setup",
-    subtitle: "Up to 30% off consoles, GPUs and accessories this week only.",
-    cta: "Explore gaming deals",
+    gamingTitle: "Gaming Zone",
+    gamingDesc: "Up to 40% off gaming gear",
+    gamingBtn: "Gaming",
+    audioTitle: "Premium Audio",
+    audioDesc: "Hear the difference. Feel the music.",
+    audioBtn: "Audio",
   },
   newsletter: {
-    title: "Get the best deals first",
-    subtitle: "Subscribe for exclusive offers, new drops and tech news.",
-    placeholder: "Enter your email",
+    title: "Get Exclusive Deals",
+    subtitle: "Subscribe and be first to know about flash sales.",
+    placeholder: "Enter your email address",
     button: "Subscribe",
     success: "Thanks! You're subscribed.",
+    noSpam: "No spam. Unsubscribe anytime.",
   },
   footer: {
     about:
@@ -324,6 +342,9 @@ export const uk: typeof en = {
     accessories: "Аксесуари",
     deals: "Акції",
     support: "Підтримка",
+    hotDeals: "Гарячі знижки",
+    newArrivals: "Новинки",
+    brands: "Бренди",
   },
   common: {
     search: "Пошук",
@@ -373,6 +394,17 @@ export const uk: typeof en = {
     color: "Колір",
     save: "Економія",
     months: "місяці",
+    leftInStock: "залишилось",
+  },
+  flash: {
+    title: "Гарячі знижки",
+    endsIn: "Закінчиться через",
+    hrs: "ГОД",
+    min: "ХВ",
+    sec: "СЕК",
+  },
+  brandsSection: {
+    title: "Наші бренди",
   },
   sort: {
     popular: "Популярні",
@@ -452,16 +484,20 @@ export const uk: typeof en = {
     tabDeals: "Найкращі знижки",
   },
   promo: {
-    title: "Зберіть ігрову систему мрії",
-    subtitle: "Знижки до 30% на консолі, відеокарти та аксесуари лише цього тижня.",
-    cta: "Переглянути ігрові акції",
+    gamingTitle: "Ігрова зона",
+    gamingDesc: "Знижки до 40% на ігрову техніку",
+    gamingBtn: "Ігри",
+    audioTitle: "Преміум аудіо",
+    audioDesc: "Відчуйте різницю. Насолоджуйтесь звуком.",
+    audioBtn: "Аудіо",
   },
   newsletter: {
-    title: "Отримуйте найкращі пропозиції першими",
-    subtitle: "Підпишіться на ексклюзивні знижки, новинки та технічні новини.",
+    title: "Отримуйте ексклюзивні знижки",
+    subtitle: "Підпишіться та дізнавайтесь про розпродажі першими.",
     placeholder: "Введіть свою пошту",
     button: "Підписатися",
     success: "Дякуємо! Ви підписані.",
+    noSpam: "Без спаму. Відписатися будь-коли.",
   },
   footer: {
     about:

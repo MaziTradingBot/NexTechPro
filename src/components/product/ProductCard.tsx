@@ -15,6 +15,13 @@ import { TagPills } from "@/components/ui/TagPills";
 import { Stars } from "@/components/ui/Stars";
 import { Price } from "@/components/ui/Price";
 
+// Deterministic pseudo stock level (10–70%) so the bar is stable per product.
+function stockPercent(id: string): number {
+  let h = 0;
+  for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) % 1000;
+  return 12 + (h % 58);
+}
+
 export function ProductCard({ product }: { product: Product }) {
   const { t } = useI18n();
   const add = useCartStore((s) => s.add);
@@ -22,6 +29,8 @@ export function ProductCard({ product }: { product: Product }) {
   const toggleCompare = useCompareStore((s) => s.toggle);
   const pushToast = useToastStore((s) => s.push);
   const discount = discountPercent(product.price, product.oldPrice);
+  const stock = stockPercent(product.id);
+  const low = stock < 30;
 
   const handleAdd = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -32,39 +41,36 @@ export function ProductCard({ product }: { product: Product }) {
   const handleCompare = (e: React.MouseEvent) => {
     e.preventDefault();
     const nowIn = toggleCompare(product.id);
-    pushToast(
-      nowIn ? t("common.addedToCompare") : t("common.removedFromCompare"),
-      "info",
-    );
+    pushToast(nowIn ? t("common.addedToCompare") : t("common.removedFromCompare"), "info");
   };
 
   return (
     <motion.div
       whileHover={{ y: -6 }}
       transition={{ type: "spring", stiffness: 300, damping: 24 }}
-      className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-[var(--border)] bg-white"
+      className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-white/10 bg-surface transition-colors hover:border-brand-500/40"
     >
       <Link href={`/product/${product.slug}`} className="flex h-full flex-col">
         <div className="relative aspect-square">
           <ProductImage product={product} className="h-full w-full" />
 
           <div className="absolute left-3 top-3 flex flex-col gap-1.5">
-            <TagPills tags={product.tags} />
-            {discount && (
-              <span className="w-fit rounded-full bg-rose-500 px-2.5 py-1 text-[11px] font-semibold text-white">
-                −{discount}%
+            {discount ? (
+              <span className="w-fit rounded-full bg-rose-500 px-2.5 py-1 text-[11px] font-bold text-white">
+                {discount}% OFF
               </span>
-            )}
+            ) : null}
+            <TagPills tags={product.tags} />
           </div>
 
           <button
             onClick={handleCompare}
             aria-label={t("product.addCompare")}
             className={cn(
-              "absolute right-3 top-3 grid h-9 w-9 place-items-center rounded-full border transition",
+              "absolute right-3 top-3 grid h-9 w-9 place-items-center rounded-full border backdrop-blur transition",
               inCompare
-                ? "border-brand-600 bg-brand-600 text-white"
-                : "border-[var(--border)] bg-white/90 text-slate-500 hover:text-brand-600",
+                ? "border-brand-500 bg-brand-600 text-white"
+                : "border-white/15 bg-black/40 text-slate-300 hover:text-brand-400",
             )}
           >
             {inCompare ? <Check size={16} /> : <GitCompare size={16} />}
@@ -72,27 +78,44 @@ export function ProductCard({ product }: { product: Product }) {
         </div>
 
         <div className="flex flex-1 flex-col gap-2 p-4">
-          <span className="text-xs font-medium text-slate-400">{product.brand}</span>
-          <h3 className="line-clamp-2 text-[15px] font-semibold leading-snug text-slate-900 group-hover:text-brand-700">
+          <span
+            className="text-[11px] font-bold uppercase tracking-wider"
+            style={{ color: product.accent }}
+          >
+            {t(`categories.${product.category}`)}
+          </span>
+          <h3 className="line-clamp-2 text-[15px] font-semibold leading-snug text-white group-hover:text-brand-300">
             {product.name}
           </h3>
 
-          <div className="flex items-center gap-1.5 text-xs text-slate-500">
+          <div className="flex items-center gap-1.5 text-xs text-slate-400">
             <Stars rating={product.rating} />
-            <span className="font-medium text-slate-600">{product.rating}</span>
-            <span>· {product.reviews}</span>
+            <span>({product.reviews.toLocaleString()})</span>
           </div>
 
-          <div className="mt-auto flex items-end justify-between gap-2 pt-2">
-            <Price value={product.price} oldValue={product.oldPrice} className="text-lg text-slate-900" />
-            <button
-              onClick={handleAdd}
-              aria-label={t("common.addToCart")}
-              className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-brand-600 text-white shadow-sm transition hover:bg-brand-700 active:scale-95"
-            >
-              <ShoppingCart size={18} />
-            </button>
+          <div className="pt-1">
+            <Price value={product.price} oldValue={product.oldPrice} className="text-xl" />
           </div>
+
+          {/* stock bar */}
+          <div className="mt-1">
+            <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/10">
+              <div
+                className={cn("h-full rounded-full", low ? "bg-rose-500" : "bg-brand-500")}
+                style={{ width: `${stock}%` }}
+              />
+            </div>
+            <p className={cn("mt-1.5 text-[11px] font-medium", low ? "text-rose-400" : "text-slate-400")}>
+              {stock}% {t("common.leftInStock")}
+            </p>
+          </div>
+
+          <button
+            onClick={handleAdd}
+            className="mt-auto flex h-10 items-center justify-center gap-2 rounded-xl brand-gradient text-sm font-semibold text-white shadow-[0_8px_24px_-8px_rgba(34,211,238,0.6)] transition hover:opacity-90 active:scale-[0.98]"
+          >
+            <ShoppingCart size={16} /> {t("common.addToCart")}
+          </button>
         </div>
       </Link>
     </motion.div>

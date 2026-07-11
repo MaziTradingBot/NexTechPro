@@ -33,12 +33,12 @@ export default function CartPage() {
   if (lines.length === 0) {
     return (
       <div className="wrap py-20">
-        <div className="mx-auto max-w-md rounded-3xl border border-[var(--border)] bg-white p-10 text-center">
-          <span className="mx-auto grid h-16 w-16 place-items-center rounded-2xl bg-brand-50 text-brand-600">
+        <div className="mx-auto max-w-md rounded-3xl border border-[var(--border)] bg-surface p-10 text-center">
+          <span className="mx-auto grid h-16 w-16 place-items-center rounded-2xl bg-brand-500/10 text-brand-400">
             <ShoppingBag size={30} />
           </span>
-          <h1 className="mt-5 text-2xl font-bold text-slate-900">{t("cart.empty")}</h1>
-          <p className="mt-2 text-slate-500">{t("cart.emptyDesc")}</p>
+          <h1 className="mt-5 text-2xl font-bold text-white">{t("cart.empty")}</h1>
+          <p className="mt-2 text-slate-400">{t("cart.emptyDesc")}</p>
           <Link
             href="/catalog"
             className="mt-6 inline-flex items-center gap-2 rounded-xl bg-brand-600 px-6 py-3 text-sm font-semibold text-white hover:bg-brand-700"
@@ -52,8 +52,8 @@ export default function CartPage() {
 
   return (
     <div className="wrap py-8">
-      <h1 className="text-3xl font-extrabold tracking-tight text-slate-900">{t("cart.title")}</h1>
-      <p className="mt-1 text-sm text-slate-500">
+      <h1 className="text-3xl font-extrabold tracking-tight text-white">{t("cart.title")}</h1>
+      <p className="mt-1 text-sm text-slate-400">
         {count} {count === 1 ? t("cart.item") : t("cart.items")}
       </p>
 
@@ -68,7 +68,7 @@ export default function CartPage() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0, height: 0 }}
-                className="flex gap-4 rounded-2xl border border-[var(--border)] bg-white p-3 sm:p-4"
+                className="flex gap-4 rounded-2xl border border-[var(--border)] bg-surface p-3 sm:p-4"
               >
                 <Link
                   href={`/product/${product!.slug}`}
@@ -83,14 +83,14 @@ export default function CartPage() {
                       <span className="text-xs text-slate-400">{product!.brand}</span>
                       <Link
                         href={`/product/${product!.slug}`}
-                        className="block font-semibold leading-snug text-slate-900 hover:text-brand-700"
+                        className="block font-semibold leading-snug text-white hover:text-brand-300"
                       >
                         {product!.name}
                       </Link>
                     </div>
                     <button
                       onClick={() => remove(item.productId)}
-                      className="grid h-8 w-8 shrink-0 place-items-center rounded-lg text-slate-400 hover:bg-rose-50 hover:text-rose-500"
+                      className="grid h-8 w-8 shrink-0 place-items-center rounded-lg text-slate-400 hover:bg-rose-500/10 hover:text-rose-500"
                       aria-label={t("common.remove")}
                     >
                       <Trash2 size={17} />
@@ -101,7 +101,7 @@ export default function CartPage() {
                     <div className="flex items-center rounded-lg border border-[var(--border)]">
                       <button
                         onClick={() => setQty(item.productId, item.qty - 1)}
-                        className="grid h-9 w-9 place-items-center text-slate-500 hover:text-slate-900"
+                        className="grid h-9 w-9 place-items-center text-slate-400 hover:text-white"
                         aria-label="-"
                       >
                         <Minus size={15} />
@@ -109,13 +109,13 @@ export default function CartPage() {
                       <span className="w-8 text-center text-sm font-semibold">{item.qty}</span>
                       <button
                         onClick={() => setQty(item.productId, item.qty + 1)}
-                        className="grid h-9 w-9 place-items-center text-slate-500 hover:text-slate-900"
+                        className="grid h-9 w-9 place-items-center text-slate-400 hover:text-white"
                         aria-label="+"
                       >
                         <Plus size={15} />
                       </button>
                     </div>
-                    <span className="font-semibold text-slate-900">
+                    <span className="font-semibold text-white">
                       {formatPrice(product!.price * item.qty, locale)}
                     </span>
                   </div>
@@ -125,7 +125,7 @@ export default function CartPage() {
           </AnimatePresence>
 
           <div className="flex justify-between pt-2">
-            <Link href="/catalog" className="text-sm font-medium text-brand-700 hover:text-brand-800">
+            <Link href="/catalog" className="text-sm font-medium text-brand-300 hover:text-brand-200">
               ← {t("cart.continueShopping")}
             </Link>
             <button onClick={clear} className="text-sm font-medium text-slate-400 hover:text-rose-500">
@@ -136,22 +136,22 @@ export default function CartPage() {
 
         {/* summary */}
         <div className="lg:sticky lg:top-40 lg:self-start">
-          <div className="rounded-2xl border border-[var(--border)] bg-white p-6">
-            <h2 className="text-lg font-bold text-slate-900">{t("cart.orderSummary")}</h2>
+          <div className="rounded-2xl border border-[var(--border)] bg-surface p-6">
+            <h2 className="text-lg font-bold text-white">{t("cart.orderSummary")}</h2>
             <dl className="mt-5 space-y-3 text-sm">
               <div className="flex justify-between">
-                <dt className="text-slate-500">{t("cart.subtotal")}</dt>
-                <dd className="font-semibold text-slate-900">{formatPrice(subtotal, locale)}</dd>
+                <dt className="text-slate-400">{t("cart.subtotal")}</dt>
+                <dd className="font-semibold text-white">{formatPrice(subtotal, locale)}</dd>
               </div>
               <div className="flex justify-between">
-                <dt className="text-slate-500">{t("cart.delivery")}</dt>
-                <dd className="font-semibold text-emerald-600">{t("common.free")}</dd>
+                <dt className="text-slate-400">{t("cart.delivery")}</dt>
+                <dd className="font-semibold text-emerald-400">{t("common.free")}</dd>
               </div>
               <div className="border-t border-[var(--border)] pt-3">
                 <div className="flex items-baseline justify-between">
-                  <dt className="font-semibold text-slate-900">{t("cart.total")}</dt>
+                  <dt className="font-semibold text-white">{t("cart.total")}</dt>
                   <dd>
-                    <Price value={subtotal} className="text-xl text-slate-900" />
+                    <Price value={subtotal} className="text-xl text-white" />
                   </dd>
                 </div>
               </div>
@@ -164,7 +164,7 @@ export default function CartPage() {
               {t("cart.checkout")} <ArrowRight size={18} />
             </Link>
 
-            <p className="mt-4 flex items-start gap-2 rounded-xl bg-brand-50 p-3 text-xs text-brand-800">
+            <p className="mt-4 flex items-start gap-2 rounded-xl bg-brand-500/10 p-3 text-xs text-brand-200">
               <ShieldCheck size={15} className="mt-0.5 shrink-0" />
               {t("cart.prepaymentNote")}
             </p>

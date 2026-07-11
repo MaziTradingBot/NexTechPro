@@ -8,7 +8,7 @@ export function GoogleButton({ onClick }: { onClick: () => void }) {
     <button
       type="button"
       onClick={onClick}
-      className="flex h-12 w-full items-center justify-center gap-3 rounded-xl border border-[var(--border)] bg-white text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+      className="flex h-12 w-full items-center justify-center gap-3 rounded-xl border border-[var(--border)] bg-surface text-sm font-semibold text-slate-200 transition hover:bg-white/5"
     >
       <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden>
         <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.4 29.3 35 24 35c-6.1 0-11-4.9-11-11s4.9-11 11-11c2.8 0 5.4 1.1 7.3 2.8l5.7-5.7C33.5 6.5 29 4.5 24 4.5 13.2 4.5 4.5 13.2 4.5 24S13.2 43.5 24 43.5c9.8 0 18.5-7.1 18.5-19.5 0-1.2-.1-2.3-.4-3.5z" />

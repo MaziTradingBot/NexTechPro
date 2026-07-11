@@ -45,6 +45,7 @@ export function CatalogClient() {
   const params = useSearchParams();
   const category = (params.get("category") as CategoryId | null) ?? null;
   const query = params.get("q") ?? "";
+  const tag = params.get("tag") as "new" | "hit" | "sale" | null;
 
   const [sort, setSort] = useState<SortKey>("popular");
   const [brands, setBrands] = useState<string[]>([]);
@@ -54,6 +55,7 @@ export function CatalogClient() {
   const baseList = useMemo(() => {
     let list = products;
     if (category) list = list.filter((p) => p.category === category);
+    if (tag) list = list.filter((p) => p.tags.includes(tag));
     if (query) {
       const q = query.toLowerCase();
       list = list.filter(
@@ -64,7 +66,7 @@ export function CatalogClient() {
       );
     }
     return list;
-  }, [category, query]);
+  }, [category, query, tag]);
 
   const availableBrands = useMemo(
     () => Array.from(new Set(baseList.map((p) => p.brand))).sort(),
@@ -83,12 +85,21 @@ export function CatalogClient() {
       prev.includes(brand) ? prev.filter((b) => b !== brand) : [...prev, brand],
     );
 
-  const heading = category ? t(`categories.${category}`) : t("nav.catalog");
+  const tagHeading: Record<string, string> = {
+    sale: t("nav.hotDeals"),
+    new: t("nav.newArrivals"),
+    hit: t("featured.tabPopular"),
+  };
+  const heading = category
+    ? t(`categories.${category}`)
+    : tag
+      ? tagHeading[tag]
+      : t("nav.catalog");
 
   const Sidebar = (
     <div className="space-y-8">
       <div>
-        <h3 className="mb-3 text-sm font-semibold text-slate-900">{t("common.all")}</h3>
+        <h3 className="mb-3 text-sm font-semibold text-white">{t("common.all")}</h3>
         <ul className="space-y-1">
           <FilterLink href="/catalog" active={!category}>
             {t("nav.catalog")}
@@ -103,16 +114,16 @@ export function CatalogClient() {
 
       {availableBrands.length > 1 && (
         <div>
-          <h3 className="mb-3 text-sm font-semibold text-slate-900">{t("common.brand")}</h3>
+          <h3 className="mb-3 text-sm font-semibold text-white">{t("common.brand")}</h3>
           <ul className="space-y-2">
             {availableBrands.map((brand) => (
               <li key={brand}>
-                <label className="flex cursor-pointer items-center gap-2.5 text-sm text-slate-600">
+                <label className="flex cursor-pointer items-center gap-2.5 text-sm text-slate-300">
                   <input
                     type="checkbox"
                     checked={brands.includes(brand)}
                     onChange={() => toggleBrand(brand)}
-                    className="h-4 w-4 rounded border-slate-300 accent-brand-600"
+                    className="h-4 w-4 rounded border-white/15 accent-brand-600"
                   />
                   {brand}
                 </label>
@@ -128,17 +139,17 @@ export function CatalogClient() {
     <div className="wrap py-8">
       {/* breadcrumb */}
       <nav className="mb-4 flex items-center gap-1.5 text-sm text-slate-400">
-        <Link href="/" className="hover:text-slate-700">
+        <Link href="/" className="hover:text-slate-200">
           {t("common.home")}
         </Link>
         <ChevronRight size={14} />
-        <span className="font-medium text-slate-700">{heading}</span>
+        <span className="font-medium text-slate-200">{heading}</span>
       </nav>
 
       <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-extrabold tracking-tight text-slate-900">{heading}</h1>
-          <p className="mt-1 text-sm text-slate-500">
+          <h1 className="text-3xl font-extrabold tracking-tight text-white">{heading}</h1>
+          <p className="mt-1 text-sm text-slate-400">
             {results.length} {t("common.results")}
             {query && <> · “{query}”</>}
           </p>
@@ -147,16 +158,16 @@ export function CatalogClient() {
         <div className="flex items-center gap-2">
           <button
             onClick={() => setFiltersOpen(true)}
-            className="flex items-center gap-2 rounded-xl border border-[var(--border)] bg-white px-4 py-2.5 text-sm font-medium text-slate-700 lg:hidden"
+            className="flex items-center gap-2 rounded-xl border border-[var(--border)] bg-surface px-4 py-2.5 text-sm font-medium text-slate-200 lg:hidden"
           >
             <SlidersHorizontal size={16} /> {t("common.filters")}
           </button>
-          <label className="flex items-center gap-2 rounded-xl border border-[var(--border)] bg-white px-3 py-2.5 text-sm">
-            <span className="hidden text-slate-500 sm:inline">{t("common.sortBy")}:</span>
+          <label className="flex items-center gap-2 rounded-xl border border-[var(--border)] bg-surface px-3 py-2.5 text-sm">
+            <span className="hidden text-slate-400 sm:inline">{t("common.sortBy")}:</span>
             <select
               value={sort}
               onChange={(e) => setSort(e.target.value as SortKey)}
-              className="bg-transparent font-medium text-slate-800 outline-none"
+              className="bg-transparent font-medium text-slate-100 outline-none"
             >
               {sortOptions.map((o) => (
                 <option key={o.key} value={o.key}>
@@ -173,8 +184,8 @@ export function CatalogClient() {
 
         <div className="flex-1">
           {results.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-[var(--border)] bg-white py-20 text-center">
-              <p className="text-slate-500">{t("common.results")}: 0</p>
+            <div className="rounded-2xl border border-dashed border-[var(--border)] bg-surface py-20 text-center">
+              <p className="text-slate-400">{t("common.results")}: 0</p>
               <Link
                 href="/catalog"
                 className="mt-4 inline-block rounded-xl bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-700"
@@ -196,12 +207,12 @@ export function CatalogClient() {
       {filtersOpen && (
         <div className="fixed inset-0 z-50 lg:hidden">
           <div className="absolute inset-0 bg-black/40" onClick={() => setFiltersOpen(false)} />
-          <div className="absolute bottom-0 left-0 right-0 max-h-[80vh] overflow-y-auto rounded-t-3xl bg-white p-6">
+          <div className="absolute bottom-0 left-0 right-0 max-h-[80vh] overflow-y-auto rounded-t-3xl bg-surface p-6">
             <div className="mb-5 flex items-center justify-between">
               <h2 className="text-lg font-bold">{t("common.filters")}</h2>
               <button
                 onClick={() => setFiltersOpen(false)}
-                className="grid h-9 w-9 place-items-center rounded-lg hover:bg-black/5"
+                className="grid h-9 w-9 place-items-center rounded-lg hover:bg-white/10"
               >
                 <X size={20} />
               </button>
@@ -236,8 +247,8 @@ function FilterLink({
         className={cn(
           "block rounded-lg px-3 py-2 text-sm transition",
           active
-            ? "bg-brand-50 font-semibold text-brand-700"
-            : "text-slate-600 hover:bg-slate-50 hover:text-slate-900",
+            ? "bg-brand-500/10 font-semibold text-brand-300"
+            : "text-slate-300 hover:bg-white/5 hover:text-white",
         )}
       >
         {children}

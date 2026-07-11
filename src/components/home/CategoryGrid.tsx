@@ -37,7 +37,7 @@ export function CategoryGrid() {
             >
               <Link
                 href={`/catalog?category=${c.id}`}
-                className="group relative flex h-full flex-col justify-between overflow-hidden rounded-2xl border border-[var(--border)] bg-white p-5 transition hover:shadow-lg"
+                className="group relative flex h-full flex-col justify-between overflow-hidden rounded-2xl border border-[var(--border)] bg-surface p-5 transition hover:shadow-lg"
               >
                 <div
                   className="absolute -right-6 -top-6 h-24 w-24 rounded-full opacity-10 transition group-hover:scale-125"
@@ -51,14 +51,14 @@ export function CategoryGrid() {
                   <Icon size={24} strokeWidth={1.6} />
                 </span>
                 <div className="mt-6">
-                  <h3 className="flex items-center gap-1 font-semibold text-slate-900">
+                  <h3 className="flex items-center gap-1 font-semibold text-white">
                     {t(`categories.${c.id}`)}
                     <ArrowUpRight
                       size={16}
                       className="text-slate-300 transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-brand-500"
                     />
                   </h3>
-                  <p className="mt-1 text-xs text-slate-500">{t(taglineKey[c.id])}</p>
+                  <p className="mt-1 text-xs text-slate-400">{t(taglineKey[c.id])}</p>
                 </div>
               </Link>
             </motion.div>

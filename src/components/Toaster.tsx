@@ -24,7 +24,7 @@ export function Toaster() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, x: 40, scale: 0.9 }}
             transition={{ type: "spring", stiffness: 400, damping: 30 }}
-            className="pointer-events-auto flex items-center gap-3 rounded-xl border border-[var(--border)] bg-white px-4 py-3 text-sm font-medium text-slate-800 shadow-lg"
+            className="pointer-events-auto flex items-center gap-3 rounded-xl border border-[var(--border)] bg-surface px-4 py-3 text-sm font-medium text-slate-100 shadow-lg"
           >
             {icons[toast.type]}
             <span className="line-clamp-2">{toast.message}</span>

@@ -25,7 +25,7 @@ export function PasswordInput({
 
   return (
     <div>
-      <label className="mb-1.5 block text-sm font-medium text-slate-600">{label}</label>
+      <label className="mb-1.5 block text-sm font-medium text-slate-300">{label}</label>
       <div className="relative">
         <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
         <input
@@ -35,7 +35,7 @@ export function PasswordInput({
           placeholder={placeholder}
           autoComplete={autoComplete}
           className={cn(
-            "h-12 w-full rounded-xl border bg-white pl-10 pr-11 text-sm outline-none focus:ring-2 focus:ring-brand-100",
+            "h-12 w-full rounded-xl border bg-surface pl-10 pr-11 text-sm outline-none focus:ring-2 focus:ring-brand-500/30",
             error ? "border-rose-400" : "border-[var(--border)] focus:border-brand-500",
           )}
         />
@@ -44,7 +44,7 @@ export function PasswordInput({
           onClick={() => setShow((v) => !v)}
           aria-label={show ? t("auth.hidePassword") : t("auth.showPassword")}
           title={show ? t("auth.hidePassword") : t("auth.showPassword")}
-          className="absolute right-2 top-1/2 grid h-8 w-8 -translate-y-1/2 place-items-center rounded-lg text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
+          className="absolute right-2 top-1/2 grid h-8 w-8 -translate-y-1/2 place-items-center rounded-lg text-slate-400 transition hover:bg-white/10 hover:text-slate-200"
         >
           {show ? <EyeOff size={18} /> : <Eye size={18} />}
         </button>
