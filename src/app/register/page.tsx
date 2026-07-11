@@ -1,0 +1,137 @@
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { Mail, User, ArrowRight } from "lucide-react";
+import { useI18n } from "@/lib/i18n/provider";
+import { useAuthStore } from "@/lib/store/auth";
+import { PasswordInput } from "@/components/ui/PasswordInput";
+import { GoogleButton } from "@/components/auth/GoogleButton";
+
+export default function RegisterPage() {
+  const { t } = useI18n();
+  const router = useRouter();
+  const register = useAuthStore((s) => s.register);
+  const loginWithGoogle = useAuthStore((s) => s.loginWithGoogle);
+
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirm, setConfirm] = useState("");
+  const [error, setError] = useState("");
+
+  const submit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    if (password.length < 6) {
+      setError(t("auth.minPassword"));
+      return;
+    }
+    if (password !== confirm) {
+      setError(t("auth.passwordsNoMatch"));
+      return;
+    }
+    const res = register(name, email, password);
+    if (!res.ok && res.error === "exists") {
+      setError(t("auth.haveAccount"));
+      return;
+    }
+    router.push("/account");
+  };
+
+  const google = () => {
+    loginWithGoogle();
+    router.push("/account");
+  };
+
+  return (
+    <div className="wrap flex justify-center py-14">
+      <div className="w-full max-w-md">
+        <div className="rounded-3xl border border-[var(--border)] bg-white p-8 shadow-sm">
+          <h1 className="text-2xl font-extrabold tracking-tight text-slate-900">{t("auth.registerTitle")}</h1>
+          <p className="mt-1.5 text-sm text-slate-500">{t("auth.registerSubtitle")}</p>
+
+          <div className="mt-6">
+            <GoogleButton onClick={google} />
+          </div>
+
+          <div className="my-6 flex items-center gap-3 text-xs text-slate-400">
+            <span className="h-px flex-1 bg-[var(--border)]" />
+            {t("auth.orEmail")}
+            <span className="h-px flex-1 bg-[var(--border)]" />
+          </div>
+
+          <form onSubmit={submit} className="space-y-4">
+            <div>
+              <label className="mb-1.5 block text-sm font-medium text-slate-600">{t("auth.name")}</label>
+              <div className="relative">
+                <User size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+                <input
+                  type="text"
+                  required
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Ivan Shevchenko"
+                  autoComplete="name"
+                  className="h-12 w-full rounded-xl border border-[var(--border)] bg-white pl-10 pr-3 text-sm outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="mb-1.5 block text-sm font-medium text-slate-600">{t("auth.email")}</label>
+              <div className="relative">
+                <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+                <input
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="you@email.com"
+                  autoComplete="email"
+                  className="h-12 w-full rounded-xl border border-[var(--border)] bg-white pl-10 pr-3 text-sm outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
+                />
+              </div>
+            </div>
+
+            <PasswordInput
+              label={t("auth.password")}
+              value={password}
+              onChange={setPassword}
+              placeholder="••••••••"
+              autoComplete="new-password"
+            />
+            <PasswordInput
+              label={t("auth.confirmPassword")}
+              value={confirm}
+              onChange={setConfirm}
+              placeholder="••••••••"
+              autoComplete="new-password"
+            />
+
+            {error && (
+              <p className="rounded-xl bg-rose-50 px-4 py-3 text-sm font-medium text-rose-600">{error}</p>
+            )}
+
+            <button
+              type="submit"
+              className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-brand-600 font-semibold text-white transition hover:bg-brand-700"
+            >
+              {t("auth.signUp")} <ArrowRight size={18} />
+            </button>
+          </form>
+
+          <p className="mt-6 text-center text-sm text-slate-500">
+            {t("auth.haveAccount")}{" "}
+            <Link href="/login" className="font-semibold text-brand-700 hover:text-brand-800">
+              {t("auth.signIn")}
+            </Link>
+          </p>
+        </div>
+
+        <p className="mt-4 text-center text-xs text-slate-400">{t("auth.demoNote")}</p>
+      </div>
+    </div>
+  );
+}
