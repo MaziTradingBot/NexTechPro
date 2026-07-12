@@ -1,8 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Don't let lint warnings block the production build on Vercel.
-  eslint: { ignoreDuringBuilds: true },
+  /* Next.js 16 does not run ESLint during `next build`, so no extra config is needed. */
 };
 
 export default nextConfig;
