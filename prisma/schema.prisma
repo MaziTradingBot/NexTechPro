@@ -1,0 +1,145 @@
+// NexTechPro database schema (Postgres via Prisma)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// Staff accounts for the admin panel.
+enum AdminRole {
+  GENERAL // full access: products, all orders, and managing admins
+  PAYMENT // orders: payments & the 15% prepayment / balance
+  DELIVERY // orders: shipping (Nova Poshta / Meest), tracking
+}
+
+enum PaymentMethod {
+  CARD_PREPAY // 15% now, rest on delivery
+  COD // cash on delivery
+  CARD_FULL // pay in full by card
+}
+
+enum PaymentStatus {
+  PENDING // nothing paid yet
+  PARTIAL // prepayment received, balance due
+  PAID // fully paid
+  REFUNDED
+}
+
+enum FulfillmentStatus {
+  NEW
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+enum Carrier {
+  NOVA_POSHTA
+  MEEST
+}
+
+model Admin {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  name         String
+  passwordHash String
+  role         AdminRole @default(GENERAL)
+  active       Boolean   @default(true)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model Product {
+  id           String   @id @default(cuid())
+  slug         String   @unique
+  name         String
+  brand        String
+  category     String
+  price        Int // UAH
+  oldPrice     Int?
+  stock        Int      @default(0) // In Stock quantity
+  isNewArrival Boolean  @default(false) // "Newly Arrived"
+  isHotDeal    Boolean  @default(false) // "Hot Deals"
+  isBestseller Boolean  @default(false)
+  rating       Float    @default(4.5)
+  reviews      Int      @default(0)
+  colors       String[] @default([])
+  highlights   String[] @default([])
+  specs        Json     @default("[]") // [{ key, value }]
+  accent       String   @default("#22d3ee")
+  popularity   Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  orderItems OrderItem[]
+
+  @@index([category])
+}
+
+model Order {
+  id          String @id @default(cuid())
+  orderNumber String @unique
+
+  // contact
+  firstName String
+  lastName  String
+  phone     String
+  email     String?
+
+  // delivery
+  country    String  @default("Ukraine")
+  region     String
+  city       String
+  postalCode String
+  carrier    Carrier @default(NOVA_POSHTA)
+  branch     String
+
+  // money (UAH)
+  subtotal    Int
+  deliveryFee Int @default(0)
+  total       Int
+  prepaid     Int @default(0)
+  remaining   Int @default(0)
+
+  paymentMethod     PaymentMethod
+  paymentStatus     PaymentStatus     @default(PENDING)
+  fulfillmentStatus FulfillmentStatus @default(NEW)
+  trackingNumber    String?
+  notes             String?
+
+  // optional link to a signed-in customer (guest orders leave this null)
+  customerEmail String?
+
+  items     OrderItem[]
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  @@index([paymentStatus])
+  @@index([fulfillmentStatus])
+  @@index([createdAt])
+}
+
+model OrderItem {
+  id        String  @id @default(cuid())
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  orderId   String
+  product   Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+  productId String?
+  name      String // snapshot
+  price     Int // snapshot (UAH)
+  qty       Int
+}
+
+/// Optional customer accounts (guest checkout stays supported).
+model Customer {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String
+  passwordHash String?
+  provider     String   @default("email")
+  createdAt    DateTime @default(now())
+}

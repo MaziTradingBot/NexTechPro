@@ -3,10 +3,10 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Zap, ArrowRight } from "lucide-react";
-import { byTag } from "@/lib/data/products";
+import type { Product } from "@/lib/data/products";
 import { ProductCard } from "@/components/product/ProductCard";
 import { useI18n } from "@/lib/i18n/provider";
-import { useMounted } from "@/lib/utils";
+import { useMounted } from "@/lib/useMounted";
 
 function useCountdown() {
   // Counts down to the next local midnight.
@@ -43,11 +43,10 @@ function TimeBox({ value, label }: { value: number; label: string }) {
   );
 }
 
-export function FlashDeals() {
+export function FlashDeals({ deals }: { deals: Product[] }) {
   const { t } = useI18n();
   const mounted = useMounted();
   const { h, m, s } = useCountdown();
-  const deals = byTag("sale").slice(0, 4);
 
   return (
     <section className="wrap py-14">

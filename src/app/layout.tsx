@@ -2,9 +2,6 @@ import type { Metadata } from "next";
 import { Inter, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/Providers";
-import { Header } from "@/components/layout/Header";
-import { Footer } from "@/components/layout/Footer";
-import { Toaster } from "@/components/Toaster";
 import { getServerLocale } from "@/lib/i18n/server";
 
 const inter = Inter({
@@ -32,13 +29,8 @@ export default async function RootLayout({
 
   return (
     <html lang={locale} className={`${inter.variable} ${geistMono.variable} h-full antialiased`}>
-      <body className="flex min-h-full flex-col">
-        <Providers initialLocale={locale}>
-          <Header />
-          <main className="flex-1">{children}</main>
-          <Footer />
-          <Toaster />
-        </Providers>
+      <body className="min-h-full">
+        <Providers initialLocale={locale}>{children}</Providers>
       </body>
     </html>
   );

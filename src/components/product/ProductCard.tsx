@@ -15,13 +15,6 @@ import { TagPills } from "@/components/ui/TagPills";
 import { Stars } from "@/components/ui/Stars";
 import { Price } from "@/components/ui/Price";
 
-// Deterministic pseudo stock level (10–70%) so the bar is stable per product.
-function stockPercent(id: string): number {
-  let h = 0;
-  for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) % 1000;
-  return 12 + (h % 58);
-}
-
 export function ProductCard({ product }: { product: Product }) {
   const { t } = useI18n();
   const add = useCartStore((s) => s.add);
@@ -29,8 +22,10 @@ export function ProductCard({ product }: { product: Product }) {
   const toggleCompare = useCompareStore((s) => s.toggle);
   const pushToast = useToastStore((s) => s.push);
   const discount = discountPercent(product.price, product.oldPrice);
-  const stock = stockPercent(product.id);
-  const low = stock < 30;
+  const stock = product.stock ?? 20;
+  const out = stock <= 0;
+  const low = stock > 0 && stock <= 5;
+  const barPct = out ? 0 : Math.min(100, Math.max(8, stock * 3));
 
   const handleAdd = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -101,12 +96,17 @@ export function ProductCard({ product }: { product: Product }) {
           <div className="mt-1">
             <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/10">
               <div
-                className={cn("h-full rounded-full", low ? "bg-rose-500" : "bg-brand-500")}
-                style={{ width: `${stock}%` }}
+                className={cn("h-full rounded-full", out || low ? "bg-rose-500" : "bg-brand-500")}
+                style={{ width: `${barPct}%` }}
               />
             </div>
-            <p className={cn("mt-1.5 text-[11px] font-medium", low ? "text-rose-400" : "text-slate-400")}>
-              {stock}% {t("common.leftInStock")}
+            <p
+              className={cn(
+                "mt-1.5 text-[11px] font-medium",
+                out || low ? "text-rose-400" : "text-slate-400",
+              )}
+            >
+              {out ? t("common.outOfStock") : `${stock} ${t("common.leftInStock")}`}
             </p>
           </div>
 

@@ -4,12 +4,7 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { SlidersHorizontal, X, ChevronRight } from "lucide-react";
-import {
-  products,
-  categories,
-  type CategoryId,
-  type Product,
-} from "@/lib/data/products";
+import { categories, type CategoryId, type Product } from "@/lib/data/products";
 import { ProductCard } from "@/components/product/ProductCard";
 import { useI18n } from "@/lib/i18n/provider";
 import { cn } from "@/lib/utils";
@@ -40,7 +35,7 @@ function sortProducts(list: Product[], key: SortKey): Product[] {
   }
 }
 
-export function CatalogClient() {
+export function CatalogClient({ allProducts }: { allProducts: Product[] }) {
   const { t } = useI18n();
   const params = useSearchParams();
   const category = (params.get("category") as CategoryId | null) ?? null;
@@ -53,7 +48,7 @@ export function CatalogClient() {
 
   // products limited by category + search first, to derive brand facets
   const baseList = useMemo(() => {
-    let list = products;
+    let list = allProducts;
     if (category) list = list.filter((p) => p.category === category);
     if (tag) list = list.filter((p) => p.tags.includes(tag));
     if (query) {
@@ -66,7 +61,7 @@ export function CatalogClient() {
       );
     }
     return list;
-  }, [category, query, tag]);
+  }, [category, query, tag, allProducts]);
 
   const availableBrands = useMemo(
     () => Array.from(new Set(baseList.map((p) => p.brand))).sort(),

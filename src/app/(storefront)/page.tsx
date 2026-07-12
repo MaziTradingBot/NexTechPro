@@ -6,17 +6,24 @@ import { FeaturedProducts } from "@/components/home/FeaturedProducts";
 import { PromoBanner } from "@/components/home/PromoBanner";
 import { Newsletter } from "@/components/home/Newsletter";
 import { BrandMarquee } from "@/components/home/BrandMarquee";
+import { getAllProducts } from "@/lib/products-db";
 
-export default function HomePage() {
+export const dynamic = "force-dynamic";
+
+export default async function HomePage() {
+  const products = await getAllProducts();
+  const deals = products.filter((p) => p.tags.includes("sale")).slice(0, 4);
+  const brands = Array.from(new Set(products.map((p) => p.brand)));
+
   return (
     <>
       <Hero />
       <Benefits />
-      <FlashDeals />
-      <FeaturedProducts />
+      <FlashDeals deals={deals} />
+      <FeaturedProducts products={products} />
       <CategoryGrid />
       <PromoBanner />
-      <BrandMarquee />
+      <BrandMarquee brands={brands} />
       <Newsletter />
     </>
   );

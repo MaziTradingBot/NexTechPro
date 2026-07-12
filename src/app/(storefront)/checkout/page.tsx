@@ -14,16 +14,14 @@ import {
   Lock,
 } from "lucide-react";
 import { useCartItems, useCartStore } from "@/lib/store/cart";
-import { getProductById } from "@/lib/data/products";
+import { useProductsByIds } from "@/lib/useProductsByIds";
 import { useI18n } from "@/lib/i18n/provider";
 import { formatPrice } from "@/lib/format";
-import { useMounted, cn } from "@/lib/utils";
+import { useMounted } from "@/lib/useMounted";
+import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/lib/store/auth";
-import {
-  useOrdersStore,
-  generateOrderId,
-  type PaymentMethod,
-} from "@/lib/store/orders";
+import { useOrdersStore, type PaymentMethod } from "@/lib/store/orders";
+import { createOrder } from "./actions";
 import { ProductImage } from "@/components/product/ProductImage";
 
 const regionsUA = [
@@ -77,8 +75,10 @@ export default function CheckoutPage() {
   const user = useAuthStore((s) => s.user);
   const addOrder = useOrdersStore((s) => s.add);
 
+  const products = useProductsByIds(items.map((i) => i.productId));
+  const byId = new Map((products ?? []).map((p) => [p.id, p] as const));
   const lines = items
-    .map((i) => ({ item: i, product: getProductById(i.productId) }))
+    .map((i) => ({ item: i, product: byId.get(i.productId) }))
     .filter((l) => l.product);
   const subtotal = lines.reduce((s, l) => s + l.product!.price * l.item.qty, 0);
 
@@ -134,53 +134,75 @@ export default function CheckoutPage() {
     return Object.keys(next).length === 0;
   };
 
-  const placeOrder = () => {
+  const placeOrder = async () => {
     if (!validate()) {
       const el = document.querySelector("[data-error='true']");
       el?.scrollIntoView({ behavior: "smooth", block: "center" });
       return;
     }
     setSubmitting(true);
-    const order = {
-      id: generateOrderId(),
-      userKey: activeUser,
-      createdAt: Date.now(),
-      items: lines.map((l) => ({
-        productId: l.product!.id,
-        name: l.product!.name,
-        qty: l.item.qty,
-        price: l.product!.price,
-      })),
-      subtotal,
-      deliveryFee,
-      total,
-      payment: form.payment,
-      prepaid,
-      remaining,
-      contact: {
+    try {
+      // The server recomputes prices from the database and saves the order.
+      const result = await createOrder({
         firstName: form.firstName,
         lastName: form.lastName,
         phone: form.phone,
         email: form.email,
-      },
-      delivery: {
         country: form.country,
         region: form.region,
         city: form.city,
         postalCode: form.postalCode,
         carrier: form.carrier,
         branch: form.branch,
-      },
-    };
-    // Simulate a short processing delay (demo — no real payment gateway).
-    setTimeout(() => {
-      addOrder(order);
+        paymentMethod: form.payment,
+        items: items.map((i) => ({ productId: i.productId, qty: i.qty })),
+        customerEmail: user?.email,
+      });
+      // Keep a local copy so the success & account pages work in demo mode.
+      addOrder({
+        id: result.orderNumber,
+        userKey: activeUser,
+        createdAt: Date.now(),
+        items: result.items.map((it) => ({
+          productId: it.productId,
+          name: it.name,
+          qty: it.qty,
+          price: it.price,
+        })),
+        subtotal: result.subtotal,
+        deliveryFee: result.deliveryFee,
+        total: result.total,
+        payment: form.payment,
+        prepaid: result.prepaid,
+        remaining: result.remaining,
+        contact: {
+          firstName: form.firstName,
+          lastName: form.lastName,
+          phone: form.phone,
+          email: form.email,
+        },
+        delivery: {
+          country: form.country,
+          region: form.region,
+          city: form.city,
+          postalCode: form.postalCode,
+          carrier: form.carrier,
+          branch: form.branch,
+        },
+      });
       clear();
-      router.push(`/checkout/success?order=${order.id}`);
-    }, 700);
+      router.push(`/checkout/success?order=${result.orderNumber}`);
+    } catch {
+      setSubmitting(false);
+      alert("Something went wrong placing your order. Please try again.");
+    }
   };
 
-  if (mounted && lines.length === 0) {
+  if (!mounted || (items.length > 0 && products === null)) {
+    return <div className="wrap py-20 text-center text-slate-400">{t("common.loading")}</div>;
+  }
+
+  if (lines.length === 0) {
     return (
       <div className="wrap py-20">
         <div className="mx-auto max-w-md rounded-3xl border border-[var(--border)] bg-surface p-10 text-center">

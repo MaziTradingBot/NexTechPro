@@ -1,12 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { products } from "@/lib/data/products";
 import { useI18n } from "@/lib/i18n/provider";
 
-export function BrandMarquee() {
+export function BrandMarquee({ brands }: { brands: string[] }) {
   const { t } = useI18n();
-  const brands = Array.from(new Set(products.map((p) => p.brand)));
 
   return (
     <section id="brands" className="wrap scroll-mt-28 py-14">

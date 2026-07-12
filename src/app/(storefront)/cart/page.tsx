@@ -4,10 +4,10 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "motion/react";
 import { Minus, Plus, Trash2, ShoppingBag, ArrowRight, ShieldCheck } from "lucide-react";
 import { useCartItems, useCartStore } from "@/lib/store/cart";
-import { getProductById } from "@/lib/data/products";
+import { useProductsByIds } from "@/lib/useProductsByIds";
 import { useI18n } from "@/lib/i18n/provider";
 import { formatPrice } from "@/lib/format";
-import { useMounted } from "@/lib/utils";
+import { useMounted } from "@/lib/useMounted";
 import { ProductImage } from "@/components/product/ProductImage";
 import { Price } from "@/components/ui/Price";
 
@@ -19,14 +19,16 @@ export default function CartPage() {
   const remove = useCartStore((s) => s.remove);
   const clear = useCartStore((s) => s.clear);
 
+  const products = useProductsByIds(items.map((i) => i.productId));
+  const byId = new Map((products ?? []).map((p) => [p.id, p] as const));
   const lines = items
-    .map((i) => ({ item: i, product: getProductById(i.productId) }))
+    .map((i) => ({ item: i, product: byId.get(i.productId) }))
     .filter((l) => l.product);
 
   const subtotal = lines.reduce((sum, l) => sum + l.product!.price * l.item.qty, 0);
   const count = items.reduce((n, i) => n + i.qty, 0);
 
-  if (!mounted) {
+  if (!mounted || (items.length > 0 && products === null)) {
     return <div className="wrap py-20 text-center text-slate-400">{t("common.loading")}</div>;
   }
 

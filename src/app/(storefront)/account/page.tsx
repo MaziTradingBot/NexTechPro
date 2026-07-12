@@ -7,7 +7,7 @@ import { useAuthStore } from "@/lib/store/auth";
 import { useOrdersStore } from "@/lib/store/orders";
 import { useI18n } from "@/lib/i18n/provider";
 import { formatPrice } from "@/lib/format";
-import { useMounted } from "@/lib/utils";
+import { useMounted } from "@/lib/useMounted";
 
 export default function AccountPage() {
   const { t, locale } = useI18n();

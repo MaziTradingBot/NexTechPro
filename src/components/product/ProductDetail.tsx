@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useParams, useRouter, notFound } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { motion } from "motion/react";
 import {
   ShoppingCart,
@@ -15,8 +15,9 @@ import {
   CreditCard,
   ChevronRight,
   Zap,
+  X,
 } from "lucide-react";
-import { getProduct, getRelated } from "@/lib/data/products";
+import type { Product } from "@/lib/data/products";
 import { discountPercent } from "@/lib/format";
 import { useCartStore } from "@/lib/store/cart";
 import { useCompareStore } from "@/lib/store/compare";
@@ -29,24 +30,25 @@ import { Stars } from "@/components/ui/Stars";
 import { Price } from "@/components/ui/Price";
 import { cn } from "@/lib/utils";
 
-export default function ProductPage() {
-  const params = useParams<{ slug: string }>();
-  const product = getProduct(params.slug);
-  if (!product) notFound();
-
+export function ProductDetail({ product: p, related }: { product: Product; related: Product[] }) {
   const { t } = useI18n();
   const router = useRouter();
   const add = useCartStore((s) => s.add);
-  const inCompare = useCompareStore((s) => s.ids.includes(product!.id));
+  const inCompare = useCompareStore((s) => s.ids.includes(p.id));
   const toggleCompare = useCompareStore((s) => s.toggle);
   const pushToast = useToastStore((s) => s.push);
 
   const [qty, setQty] = useState(1);
   const [colorIndex, setColorIndex] = useState(0);
 
-  const p = product!;
   const discount = discountPercent(p.price, p.oldPrice);
-  const related = getRelated(p);
+  const inStock = (p.stock ?? 1) > 0;
+
+  // Seeded products use i18n spec keys; admin-added ones use free-text labels.
+  const specLabel = (key: string) => {
+    const label = t(`spec.${key}`);
+    return label === `spec.${key}` ? key : label;
+  };
 
   const handleAdd = () => {
     add(p.id, qty);
@@ -73,9 +75,8 @@ export default function ProductPage() {
       </nav>
 
       <div className="grid gap-8 lg:grid-cols-2">
-        {/* gallery */}
         <div className="lg:sticky lg:top-40 lg:self-start">
-          <div className="relative overflow-hidden rounded-3xl border border-[var(--border)] bg-surface">
+          <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-surface">
             <ProductImage product={p} className="aspect-square w-full" iconClassName="h-1/3 w-1/3" />
             <div className="absolute left-4 top-4 flex flex-col gap-2">
               <TagPills tags={p.tags} />
@@ -97,7 +98,7 @@ export default function ProductPage() {
                     aria-label={c}
                     className={cn(
                       "h-8 w-8 rounded-full border-2 transition",
-                      colorIndex === i ? "border-brand-600 ring-2 ring-brand-500/30" : "border-white shadow",
+                      colorIndex === i ? "border-brand-500 ring-2 ring-brand-500/30" : "border-white/20",
                     )}
                     style={{ background: c }}
                   />
@@ -107,7 +108,6 @@ export default function ProductPage() {
           )}
         </div>
 
-        {/* info */}
         <div>
           <span className="text-sm font-medium text-slate-400">{p.brand}</span>
           <h1 className="mt-1 text-3xl font-extrabold tracking-tight text-white">{p.name}</h1>
@@ -121,13 +121,18 @@ export default function ProductPage() {
           </div>
 
           <div className="mt-5 flex items-end gap-3">
-            <Price value={p.price} oldValue={p.oldPrice} className="text-3xl text-white" oldClassName="text-base" />
-            <span className="mb-1 inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2.5 py-1 text-xs font-semibold text-emerald-400">
-              <Check size={13} /> {t("common.inStock")}
-            </span>
+            <Price value={p.price} oldValue={p.oldPrice} className="text-3xl" oldClassName="text-base" />
+            {inStock ? (
+              <span className="mb-1 inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2.5 py-1 text-xs font-semibold text-emerald-400">
+                <Check size={13} /> {t("common.inStock")}
+              </span>
+            ) : (
+              <span className="mb-1 inline-flex items-center gap-1 rounded-full bg-rose-500/10 px-2.5 py-1 text-xs font-semibold text-rose-400">
+                <X size={13} /> {t("common.outOfStock")}
+              </span>
+            )}
           </div>
 
-          {/* highlights */}
           <ul className="mt-6 space-y-2">
             {p.highlights.map((h) => (
               <li key={h} className="flex items-center gap-2.5 text-sm text-slate-300">
@@ -139,9 +144,8 @@ export default function ProductPage() {
             ))}
           </ul>
 
-          {/* qty + actions */}
           <div className="mt-7 flex flex-wrap items-center gap-3">
-            <div className="flex items-center rounded-xl border border-[var(--border)] bg-surface">
+            <div className="flex items-center rounded-xl border border-white/10 bg-surface">
               <button
                 onClick={() => setQty((q) => Math.max(1, q - 1))}
                 className="grid h-12 w-12 place-items-center text-slate-400 hover:text-white"
@@ -161,13 +165,15 @@ export default function ProductPage() {
 
             <button
               onClick={handleAdd}
-              className="flex h-12 flex-1 items-center justify-center gap-2 rounded-xl bg-brand-600 px-6 font-semibold text-white transition hover:bg-brand-700 active:scale-[0.98] sm:flex-none"
+              disabled={!inStock}
+              className="flex h-12 flex-1 items-center justify-center gap-2 rounded-xl brand-gradient px-6 font-semibold text-white transition hover:opacity-90 active:scale-[0.98] disabled:opacity-40 sm:flex-none"
             >
               <ShoppingCart size={18} /> {t("common.addToCart")}
             </button>
             <button
               onClick={handleBuyNow}
-              className="flex h-12 flex-1 items-center justify-center gap-2 rounded-xl bg-violet-600 px-6 font-semibold text-white transition hover:bg-violet-500 active:scale-[0.98] sm:flex-none"
+              disabled={!inStock}
+              className="flex h-12 flex-1 items-center justify-center gap-2 rounded-xl bg-violet-600 px-6 font-semibold text-white transition hover:bg-violet-500 active:scale-[0.98] disabled:opacity-40 sm:flex-none"
             >
               <Zap size={18} /> {t("common.buyNow")}
             </button>
@@ -187,8 +193,7 @@ export default function ProductPage() {
             {inCompare ? t("product.inCompare") : t("product.addCompare")}
           </button>
 
-          {/* trust badges */}
-          <div className="mt-7 grid gap-3 rounded-2xl border border-[var(--border)] bg-surface p-4 sm:grid-cols-3">
+          <div className="mt-7 grid gap-3 rounded-2xl border border-white/10 bg-surface p-4 sm:grid-cols-3">
             <Badge icon={<Truck size={18} />} text={t("product.delivery")} />
             <Badge icon={<ShieldCheck size={18} />} text={t("product.warranty")} />
             <Badge icon={<CreditCard size={18} />} text={t("product.securePay")} />
@@ -196,16 +201,15 @@ export default function ProductPage() {
         </div>
       </div>
 
-      {/* specifications */}
       <div className="mt-14 grid gap-8 lg:grid-cols-2">
         <div>
           <h2 className="mb-4 text-xl font-bold text-white">{t("common.specifications")}</h2>
-          <div className="overflow-hidden rounded-2xl border border-[var(--border)]">
+          <div className="overflow-hidden rounded-2xl border border-white/10">
             <table className="w-full text-sm">
               <tbody>
                 {p.specs.map((s, i) => (
                   <tr key={s.key} className={i % 2 ? "bg-surface" : "bg-white/[0.03]"}>
-                    <td className="w-1/2 px-4 py-3 text-slate-400">{t(`spec.${s.key}`)}</td>
+                    <td className="w-1/2 px-4 py-3 text-slate-400">{specLabel(s.key)}</td>
                     <td className="px-4 py-3 font-medium text-slate-100">{s.value}</td>
                   </tr>
                 ))}
@@ -220,7 +224,7 @@ export default function ProductPage() {
 
         <div>
           <h2 className="mb-4 text-xl font-bold text-white">{t("common.description")}</h2>
-          <div className="rounded-2xl border border-[var(--border)] bg-surface p-5 text-sm leading-relaxed text-slate-300">
+          <div className="rounded-2xl border border-white/10 bg-surface p-5 text-sm leading-relaxed text-slate-300">
             <p>
               <span className="font-semibold text-white">{p.name}</span> — {p.brand}.
             </p>
@@ -235,7 +239,6 @@ export default function ProductPage() {
         </div>
       </div>
 
-      {/* related */}
       {related.length > 0 && (
         <div className="mt-16">
           <h2 className="mb-6 text-2xl font-bold text-white">{t("common.relatedProducts")}</h2>

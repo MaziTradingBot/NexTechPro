@@ -5,10 +5,10 @@ import { X, GitCompare, ShoppingCart, ArrowRight } from "lucide-react";
 import { useCompareStore } from "@/lib/store/compare";
 import { useCartStore } from "@/lib/store/cart";
 import { useToastStore } from "@/lib/store/toast";
-import { getProductById } from "@/lib/data/products";
+import { useProductsByIds } from "@/lib/useProductsByIds";
 import { useI18n } from "@/lib/i18n/provider";
 import { formatPrice } from "@/lib/format";
-import { useMounted } from "@/lib/utils";
+import { useMounted } from "@/lib/useMounted";
 import { ProductImage } from "@/components/product/ProductImage";
 import { Stars } from "@/components/ui/Stars";
 
@@ -21,9 +21,10 @@ export default function ComparePage() {
   const add = useCartStore((s) => s.add);
   const pushToast = useToastStore((s) => s.push);
 
-  const items = ids.map((id) => getProductById(id)).filter(Boolean);
+  const products = useProductsByIds(ids);
+  const items = products ?? [];
 
-  if (!mounted) {
+  if (!mounted || (ids.length > 0 && products === null)) {
     return <div className="wrap py-20 text-center text-slate-400">{t("common.loading")}</div>;
   }
 
@@ -51,8 +52,14 @@ export default function ComparePage() {
   const specKeys: string[] = [];
   items.forEach((p) => p!.specs.forEach((s) => !specKeys.includes(s.key) && specKeys.push(s.key)));
 
+  const byId = new Map(items.map((p) => [p.id, p] as const));
   const specValue = (productId: string, key: string) =>
-    getProductById(productId)?.specs.find((s) => s.key === key)?.value ?? "—";
+    byId.get(productId)?.specs.find((s) => s.key === key)?.value ?? "—";
+
+  const specLabel = (key: string) => {
+    const label = t(`spec.${key}`);
+    return label === `spec.${key}` ? key : label;
+  };
 
   return (
     <div className="wrap py-8">
@@ -118,7 +125,7 @@ export default function ComparePage() {
               ))}
             </SpecRow>
             {specKeys.map((key, i) => (
-              <SpecRow key={key} label={t(`spec.${key}`)} zebra={i % 2 === 0}>
+              <SpecRow key={key} label={specLabel(key)} zebra={i % 2 === 0}>
                 {items.map((p) => (
                   <td key={p!.id} className="border-l border-[var(--border)] p-4 text-slate-200">
                     {specValue(p!.id, key)}

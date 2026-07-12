@@ -22,7 +22,7 @@ import { useI18n } from "@/lib/i18n/provider";
 import { useCartItems } from "@/lib/store/cart";
 import { useCompareStore } from "@/lib/store/compare";
 import { useAuthStore } from "@/lib/store/auth";
-import { useMounted } from "@/lib/utils";
+import { useMounted } from "@/lib/useMounted";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import type { CategoryId } from "@/lib/data/products";
 import { cn } from "@/lib/utils";
