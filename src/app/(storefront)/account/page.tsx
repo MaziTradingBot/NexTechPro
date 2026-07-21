@@ -2,9 +2,11 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { User, LogOut, Package, Mail, ShieldCheck, ArrowRight } from "lucide-react";
+import { User, LogOut, Package, Mail, ShieldCheck, ArrowRight, RotateCcw } from "lucide-react";
 import { useAuthStore } from "@/lib/store/auth";
-import { useOrdersStore } from "@/lib/store/orders";
+import { useOrdersStore, type Order } from "@/lib/store/orders";
+import { useCartStore } from "@/lib/store/cart";
+import { useToastStore } from "@/lib/store/toast";
 import { useI18n } from "@/lib/i18n/provider";
 import { formatPrice } from "@/lib/format";
 import { useMounted } from "@/lib/useMounted";
@@ -16,6 +18,14 @@ export default function AccountPage() {
   const user = useAuthStore((s) => s.user);
   const logout = useAuthStore((s) => s.logout);
   const orders = useOrdersStore((s) => s.orders);
+  const add = useCartStore((s) => s.add);
+  const pushToast = useToastStore((s) => s.push);
+
+  const reorder = (order: Order) => {
+    order.items.forEach((it) => add(it.productId, it.qty));
+    pushToast(t("account.reorderedToCart"), "success");
+    router.push("/cart");
+  };
 
   if (!mounted) {
     return <div className="wrap py-20 text-center text-slate-400">{t("common.loading")}</div>;
@@ -114,11 +124,28 @@ export default function AccountPage() {
                       {t("success.days")}
                     </span>
                   </div>
-                  <div className="mt-3 flex items-center justify-between border-t border-[var(--border)] pt-3 text-sm">
-                    <span className="text-slate-400">
-                      {o.items.reduce((n, i) => n + i.qty, 0)} × {t("cart.item")}
-                    </span>
+
+                  <div className="mt-3 space-y-1.5 border-t border-[var(--border)] pt-3 text-sm">
+                    {o.items.map((it) => (
+                      <div key={it.productId} className="flex justify-between gap-3">
+                        <span className="line-clamp-1 text-slate-300">
+                          {it.name} <span className="text-slate-500">× {it.qty}</span>
+                        </span>
+                        <span className="whitespace-nowrap text-slate-400">
+                          {formatPrice(it.price * it.qty, locale)}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="mt-3 flex items-center justify-between border-t border-[var(--border)] pt-3">
                     <span className="font-bold text-white">{formatPrice(o.total, locale)}</span>
+                    <button
+                      onClick={() => reorder(o)}
+                      className="inline-flex items-center gap-1.5 rounded-lg bg-brand-600 px-3.5 py-2 text-sm font-semibold text-white transition hover:bg-brand-700"
+                    >
+                      <RotateCcw size={15} /> {t("account.reorder")}
+                    </button>
                   </div>
                 </div>
               ))}

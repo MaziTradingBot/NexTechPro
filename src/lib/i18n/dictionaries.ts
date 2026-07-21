@@ -299,6 +299,8 @@ export const en = {
     noOrders: "You have no orders yet.",
     logout: "Sign out",
     guestCart: "Guest",
+    reorder: "Reorder",
+    reorderedToCart: "Items added to your cart",
   },
   spec: {
     display: "Display",
@@ -623,6 +625,8 @@ export const uk: typeof en = {
     noOrders: "У вас поки що немає замовлень.",
     logout: "Вийти",
     guestCart: "Гість",
+    reorder: "Замовити знову",
+    reorderedToCart: "Товари додано у ваш кошик",
   },
   spec: {
     display: "Екран",
