@@ -22,6 +22,7 @@ import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/lib/store/auth";
 import { useOrdersStore, type PaymentMethod } from "@/lib/store/orders";
 import { createOrder } from "./actions";
+import { StripePaymentBox, stripeConfigured } from "@/components/checkout/StripePaymentBox";
 import { ProductImage } from "@/components/product/ProductImage";
 
 const countries = ["Ukraine", "Poland", "Moldova"] as const;
@@ -49,6 +50,14 @@ const regionsByCountry: Record<string, string[]> = {
     "Rezina", "Rîșcani", "Sîngerei", "Șoldănești", "Soroca", "Ștefan Vodă",
     "Strășeni", "Taraclia", "Telenești", "Ungheni",
   ],
+};
+
+// Phone dial code per country — updates when the country changes.
+const dialCodes: Record<string, string> = { Ukraine: "+380", Poland: "+48", Moldova: "+373" };
+const phonePlaceholders: Record<string, string> = {
+  Ukraine: "+380 __ ___ __ __",
+  Poland: "+48 ___ ___ ___",
+  Moldova: "+373 __ ___ ___",
 };
 
 type Carrier = "novaPoshta" | "meest";
@@ -87,7 +96,7 @@ export default function CheckoutPage() {
   const [form, setForm] = useState<FormState>({
     firstName: user ? user.name.split(" ")[0] : "",
     lastName: user ? user.name.split(" ").slice(1).join(" ") : "",
-    phone: "",
+    phone: "+380 ",
     email: user?.email ?? "",
     country: "Ukraine",
     region: "",
@@ -114,6 +123,8 @@ export default function CheckoutPage() {
         ? total
         : 0;
   const remaining = total - prepaid;
+  const isCardPayment = form.payment !== "cod";
+  const useStripeCheckout = isCardPayment && stripeConfigured;
 
   const validate = (): boolean => {
     const required: (keyof FormState)[] = [
@@ -136,12 +147,7 @@ export default function CheckoutPage() {
     return Object.keys(next).length === 0;
   };
 
-  const placeOrder = async () => {
-    if (!validate()) {
-      const el = document.querySelector("[data-error='true']");
-      el?.scrollIntoView({ behavior: "smooth", block: "center" });
-      return;
-    }
+  const finalizeOrder = async () => {
     setSubmitting(true);
     try {
       // The server recomputes prices from the database and saves the order.
@@ -197,7 +203,17 @@ export default function CheckoutPage() {
     } catch {
       setSubmitting(false);
       alert("Something went wrong placing your order. Please try again.");
+      throw new Error("order-failed");
     }
+  };
+
+  const placeOrder = async () => {
+    if (!validate()) {
+      const el = document.querySelector("[data-error='true']");
+      el?.scrollIntoView({ behavior: "smooth", block: "center" });
+      return;
+    }
+    await finalizeOrder();
   };
 
   if (!mounted || (items.length > 0 && products === null)) {
@@ -256,7 +272,7 @@ export default function CheckoutPage() {
                 onChange={(v) => set("phone", v)}
                 error={errors.phone}
                 errorText={t("checkout.invalidPhone")}
-                placeholder="+380 __ ___ __ __"
+                placeholder={phonePlaceholders[form.country]}
                 type="tel"
               />
               <Field
@@ -277,8 +293,9 @@ export default function CheckoutPage() {
                 <select
                   value={form.country}
                   onChange={(e) => {
-                    setForm((f) => ({ ...f, country: e.target.value, region: "" }));
-                    if (errors.region) setErrors((er) => ({ ...er, region: false }));
+                    const c = e.target.value;
+                    setForm((f) => ({ ...f, country: c, region: "", phone: `${dialCodes[c] ?? ""} ` }));
+                    setErrors((er) => ({ ...er, region: false, phone: false }));
                   }}
                   className="h-12 w-full rounded-xl border border-[var(--border)] bg-surface px-3 text-sm outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30"
                 >
@@ -427,19 +444,30 @@ export default function CheckoutPage() {
               )}
             </dl>
 
-            <button
-              onClick={placeOrder}
-              disabled={submitting}
-              className="mt-6 flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-brand-600 font-semibold text-white transition hover:bg-brand-700 disabled:opacity-70"
-            >
-              {submitting ? (
-                t("checkout.placing")
-              ) : (
-                <>
-                  <Check size={18} /> {t("checkout.placeOrder")}
-                </>
-              )}
-            </button>
+            {useStripeCheckout ? (
+              <div className="mt-6">
+                <StripePaymentBox
+                  amount={prepaid}
+                  label={t("checkout.placeOrder")}
+                  onValidate={validate}
+                  onPaid={finalizeOrder}
+                />
+              </div>
+            ) : (
+              <button
+                onClick={placeOrder}
+                disabled={submitting}
+                className="mt-6 flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-brand-600 font-semibold text-white transition hover:bg-brand-700 disabled:opacity-70"
+              >
+                {submitting ? (
+                  t("checkout.placing")
+                ) : (
+                  <>
+                    <Check size={18} /> {t("checkout.placeOrder")}
+                  </>
+                )}
+              </button>
+            )}
           </div>
         </div>
       </div>
