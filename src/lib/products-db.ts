@@ -32,6 +32,7 @@ export function mapProduct(p: DBProduct): Product {
     specs: (p.specs as unknown as Spec[]) ?? [],
     accent: p.accent,
     stock: p.stock,
+    imageUrl: p.imageUrl ?? undefined,
   };
 }
 

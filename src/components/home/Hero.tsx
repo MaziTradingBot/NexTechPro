@@ -17,6 +17,11 @@ const slideWash = [
   "radial-gradient(90% 120% at 75% 20%, rgba(59,130,246,0.55), transparent 60%), radial-gradient(80% 120% at 95% 100%, rgba(236,72,153,0.4), transparent 55%)",
   "radial-gradient(90% 120% at 75% 30%, rgba(168,85,247,0.55), transparent 60%), radial-gradient(80% 120% at 100% 90%, rgba(6,182,212,0.45), transparent 55%)",
 ];
+const slideBg = [
+  "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=1200&q=70",
+  "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=1200&q=70",
+  "https://images.unsplash.com/photo-1587202372775-e229f172b9d7?auto=format&fit=crop&w=1200&q=70",
+];
 
 export function Hero() {
   const { messages, t } = useI18n();
@@ -37,11 +42,33 @@ export function Hero() {
 
   return (
     <section className="relative overflow-hidden bg-ink-950 text-white">
-      <div className="absolute inset-0 grid-bg opacity-40" aria-hidden />
+      {/* photo background (fades between slides, falls back to dark if it fails) */}
+      <AnimatePresence>
+        <motion.img
+          key={`bg-${index}`}
+          src={slideBg[index]}
+          alt=""
+          initial={{ opacity: 0, scale: 1.05 }}
+          animate={{ opacity: 0.4, scale: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 1 }}
+          className="absolute inset-0 h-full w-full object-cover"
+          aria-hidden
+        />
+      </AnimatePresence>
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            "linear-gradient(90deg, #070b16 20%, rgba(7,11,22,0.55) 70%, rgba(7,11,22,0.25) 100%)",
+        }}
+        aria-hidden
+      />
+      <div className="absolute inset-0 grid-bg opacity-30" aria-hidden />
       <motion.div
         key={`wash-${index}`}
         initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
+        animate={{ opacity: 0.8 }}
         transition={{ duration: 0.8 }}
         className="absolute inset-0"
         style={{ backgroundImage: slideWash[index] }}
@@ -74,8 +101,8 @@ export function Hero() {
             transition={{ duration: 0.5, ease: "easeOut" }}
             className="max-w-2xl"
           >
-            <span className="inline-flex items-center gap-2 rounded-full bg-violet-500/20 px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-violet-300 ring-1 ring-violet-400/30">
-              <span className="h-1.5 w-1.5 rounded-full bg-violet-400" />
+            <span className="inline-flex items-center gap-2 rounded-full bg-rose-500/20 px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-rose-300 ring-1 ring-rose-400/30">
+              <span className="h-1.5 w-1.5 rounded-full bg-rose-400" />
               {slide.eyebrow}
             </span>
             <h1 className="mt-5 text-4xl font-extrabold leading-[1.05] tracking-tight sm:text-5xl lg:text-6xl">

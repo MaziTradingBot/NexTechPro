@@ -64,6 +64,7 @@ export async function saveProduct(formData: FormData): Promise<void> {
     rating: Math.min(5, Math.max(0, num(formData.get("rating")) || 4.5)),
     reviews: num(formData.get("reviews")),
     accent: String(formData.get("accent") || "#22d3ee"),
+    imageUrl: String(formData.get("imageUrl") || "").trim() || null,
     colors: String(formData.get("colors") || "")
       .split(",")
       .map((c) => c.trim())

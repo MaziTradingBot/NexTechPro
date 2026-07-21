@@ -71,6 +71,7 @@ model Product {
   highlights   String[] @default([])
   specs        Json     @default("[]") // [{ key, value }]
   accent       String   @default("#22d3ee")
+  imageUrl     String? // real product photo (falls back to generated artwork)
   popularity   Int      @default(0)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt

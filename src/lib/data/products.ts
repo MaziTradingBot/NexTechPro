@@ -36,6 +36,7 @@ export interface Product {
   specs: Spec[];
   accent: string; // used for the generated product artwork
   stock?: number; // live inventory (from the database)
+  imageUrl?: string; // real product photo (optional; falls back to artwork)
 }
 
 export interface CategoryMeta {

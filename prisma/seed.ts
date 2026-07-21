@@ -4,6 +4,18 @@ import { products } from "../src/lib/data/products";
 
 const prisma = new PrismaClient();
 
+const U = (id: string) => `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=700&q=70`;
+const categoryImage: Record<string, string> = {
+  phones: U("1511707171634-5f897ff02aa9"),
+  laptops: U("1496181133206-80ce9b88a853"),
+  gaming: U("1587202372775-e229f172b9d7"),
+  audio: U("1505740420928-5e560c06d30e"),
+  tablets: U("1544244015-0df4b3ffc6b0"),
+  wearables: U("1523275335684-37898b6baf30"),
+  accessories: U("1526170375885-4d8ecf77b99f"),
+  monitors: U("1593642702821-c8da6771f0c6"),
+};
+
 async function main() {
   // --- Products (from the existing catalog) ---
   for (const p of products) {
@@ -24,6 +36,7 @@ async function main() {
       specs: JSON.parse(JSON.stringify(p.specs)),
       accent: p.accent,
       popularity: p.popularity,
+      imageUrl: categoryImage[p.category] ?? null,
     };
     await prisma.product.upsert({
       where: { slug: p.slug },

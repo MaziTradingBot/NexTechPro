@@ -54,6 +54,15 @@ export function ProductForm({ product }: { product?: Product | null }) {
               <label className={label}>Accent colour</label>
               <input name="accent" defaultValue={product?.accent ?? "#22d3ee"} className={field} placeholder="#22d3ee" />
             </div>
+            <div className="sm:col-span-2">
+              <label className={label}>Image URL (optional)</label>
+              <input
+                name="imageUrl"
+                defaultValue={product?.imageUrl ?? ""}
+                className={field}
+                placeholder="https://…  (leave blank to use generated artwork)"
+              />
+            </div>
           </div>
         </section>
 
