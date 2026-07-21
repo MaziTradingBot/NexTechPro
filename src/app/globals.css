@@ -1,45 +1,49 @@
 @import "tailwindcss";
 
 /* ---------------------------------------------------------------------------
-   NexTechPro design system — DARK theme (matches the Figma landing design)
-   Cyan/blue primary · violet secondary · rose deals · on near-black surfaces.
+   NexTechPro design system — exact palette from the Figma landing design.
+   bg #06080F · surface #0C1221 · border #1A2640 · text #E2E8F5
+   primary cyan #00C8FF → blue #0090FF · deal #FF3E6C
+   Headings: Exo 2 · Body: DM Sans
 --------------------------------------------------------------------------- */
 @theme {
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-sans: var(--font-dmsans), var(--font-inter), ui-sans-serif, system-ui, -apple-system, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, "SFMono-Regular", monospace;
 
-  /* Brand = cyan (primary accent, prices, CTAs) */
-  --color-brand-50: #ecfeff;
-  --color-brand-100: #cffafe;
-  --color-brand-200: #a5f3fc;
-  --color-brand-300: #67e8f9;
-  --color-brand-400: #22d3ee;
-  --color-brand-500: #06b6d4;
-  --color-brand-600: #0891b2;
-  --color-brand-700: #0e7490;
-  --color-brand-800: #155e75;
-  --color-brand-900: #164e63;
-  --color-brand-950: #083344;
+  /* Brand = cyan (#00C8FF) → blue (#0090FF) */
+  --color-brand-50: #e6faff;
+  --color-brand-100: #ccf5ff;
+  --color-brand-200: #99ebff;
+  --color-brand-300: #5cdcff;
+  --color-brand-400: #00c8ff;
+  --color-brand-500: #00b0ee;
+  --color-brand-600: #0090ff;
+  --color-brand-700: #0077e0;
+  --color-brand-800: #0a5bb0;
+  --color-brand-900: #0e4a8a;
+  --color-brand-950: #0a2f57;
 
   --color-accent-400: #38bdf8;
-  --color-accent-500: #3b82f6;
-  --color-accent-600: #2563eb;
+  --color-accent-500: #0090ff;
+  --color-accent-600: #0077e0;
 
-  /* Surfaces */
-  --color-ink-900: #0b0b12;
-  --color-ink-950: #07070c;
-  --color-surface: #14141d;
-  --color-surface2: #1c1c28;
-  --color-line: rgba(255, 255, 255, 0.09);
+  --color-deal-500: #ff3e6c;
+  --color-deal-600: #f52559;
+
+  --color-ink-900: #080b14;
+  --color-ink-950: #05070d;
+  --color-surface: #0c1221;
+  --color-surface2: #131c30;
+  --color-line: #1a2640;
 }
 
 :root {
-  --bg: #0a0a10;
-  --surface: #14141d;
-  --surface-2: #1c1c28;
-  --text: #f1f5f9;
-  --muted: #94a3b8;
-  --border: rgba(255, 255, 255, 0.09);
+  --bg: #06080f;
+  --surface: #0c1221;
+  --surface-2: #131c30;
+  --text: #e2e8f5;
+  --muted: #7a8ba8;
+  --border: #1a2640;
 }
 
 html {
@@ -55,8 +59,20 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+/* Headings + product names use the display face (Exo 2), like the Figma. */
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-display), var(--font-dmsans), sans-serif;
+  letter-spacing: -0.01em;
+}
+.font-display {
+  font-family: var(--font-display), var(--font-dmsans), sans-serif;
+}
+
 ::selection {
-  background: rgba(34, 211, 238, 0.3);
+  background: rgba(0, 200, 255, 0.28);
 }
 
 /* Layout helper --------------------------------------------------------- */
@@ -79,16 +95,16 @@ body {
 
 /* Gradients ------------------------------------------------------------- */
 .text-gradient {
-  background-image: linear-gradient(100deg, #22d3ee 0%, #3b82f6 100%);
+  background-image: linear-gradient(135deg, #00c8ff 0%, #0090ff 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }
 .brand-gradient {
-  background-image: linear-gradient(120deg, #22d3ee 0%, #3b82f6 100%);
+  background-image: linear-gradient(135deg, #00c8ff 0%, #0090ff 100%);
 }
 .deal-gradient {
-  background-image: linear-gradient(100deg, #fb7185 0%, #f43f5e 60%, #e11d48 100%);
+  background-image: linear-gradient(100deg, #ff3e6c 0%, #f52559 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -96,14 +112,14 @@ body {
 
 /* Surfaces & effects ---------------------------------------------------- */
 .glass {
-  background: rgba(10, 10, 16, 0.72);
+  background: rgba(6, 8, 15, 0.75);
   backdrop-filter: saturate(160%) blur(14px);
   -webkit-backdrop-filter: saturate(160%) blur(14px);
 }
 .card {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 1.25rem;
+  border-radius: 0.85rem;
 }
 
 .no-scrollbar::-webkit-scrollbar {
@@ -116,12 +132,12 @@ body {
 
 /* Form controls on dark */
 select option {
-  background: #14141d;
-  color: #f1f5f9;
+  background: #0c1221;
+  color: #e2e8f5;
 }
 
 *:focus-visible {
-  outline: 2px solid #22d3ee;
+  outline: 2px solid #00c8ff;
   outline-offset: 2px;
 }
 

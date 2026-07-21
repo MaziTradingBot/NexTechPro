@@ -51,7 +51,7 @@ export function ProductCard({ product }: { product: Product }) {
 
           <div className="absolute left-3 top-3 flex flex-col gap-1.5">
             {discount ? (
-              <span className="w-fit rounded-full bg-rose-500 px-2.5 py-1 text-[11px] font-bold text-white">
+              <span className="w-fit rounded-full bg-deal-500 px-2.5 py-1 text-[11px] font-bold text-white">
                 {discount}% OFF
               </span>
             ) : null}

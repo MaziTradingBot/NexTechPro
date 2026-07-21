@@ -12,7 +12,6 @@ import {
   X,
   Flame,
   Sparkles,
-  Tag,
   MessageCircle,
   LayoutGrid,
   ChevronRight,
@@ -31,7 +30,6 @@ const mainNav = [
   { key: "catalog", href: "/catalog", Icon: LayoutGrid },
   { key: "hotDeals", href: "/catalog?tag=sale", Icon: Flame },
   { key: "newArrivals", href: "/catalog?tag=new", Icon: Sparkles },
-  { key: "brands", href: "/#brands", Icon: Tag },
   { key: "support", href: "/support", Icon: MessageCircle },
 ];
 
