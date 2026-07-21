@@ -101,7 +101,7 @@ export function Header() {
       <div className="border-b border-white/10 glass">
         <div className="wrap flex h-16 items-center gap-3">
           <button
-            className="grid h-10 w-10 place-items-center rounded-lg text-slate-200 hover:bg-white/10 lg:hidden"
+            className="grid h-10 w-10 shrink-0 place-items-center rounded-lg text-slate-200 transition hover:bg-white/10"
             onClick={() => setMenuOpen(true)}
             aria-label={t("nav.catalog")}
           >
@@ -110,21 +110,7 @@ export function Header() {
 
           <Logo />
 
-          {/* desktop nav */}
-          <nav className="ml-4 hidden items-center gap-1 xl:flex">
-            {mainNav.map(({ key, href, Icon }) => (
-              <Link
-                key={key}
-                href={href}
-                className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium text-slate-300 transition hover:bg-white/5 hover:text-white"
-              >
-                <Icon size={15} className="text-brand-400" />
-                {t(`nav.${key}`)}
-              </Link>
-            ))}
-          </nav>
-
-          <form onSubmit={submitSearch} className="relative ml-auto hidden max-w-xs flex-1 md:block">
+          <form onSubmit={submitSearch} className="relative ml-auto hidden max-w-md flex-1 md:block">
             <Search size={17} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500" />
             <input
               value={query}
@@ -185,9 +171,9 @@ export function Header() {
         </form>
       </div>
 
-      {/* mobile drawer */}
+      {/* nav drawer */}
       {menuOpen && (
-        <div className="fixed inset-0 z-50 lg:hidden">
+        <div className="fixed inset-0 z-50">
           <div className="absolute inset-0 bg-black/60" onClick={() => setMenuOpen(false)} />
           <div className="absolute left-0 top-0 flex h-full w-[84%] max-w-sm flex-col bg-ink-900 shadow-2xl">
             <div className="flex items-center justify-between border-b border-white/10 p-4">

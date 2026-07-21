@@ -24,30 +24,32 @@ import { useOrdersStore, type PaymentMethod } from "@/lib/store/orders";
 import { createOrder } from "./actions";
 import { ProductImage } from "@/components/product/ProductImage";
 
-const regionsUA = [
-  "Київська",
-  "Львівська",
-  "Харківська",
-  "Одеська",
-  "Дніпропетровська",
-  "Запорізька",
-  "Вінницька",
-  "Полтавська",
-  "Івано-Франківська",
-  "Тернопільська",
-  "Закарпатська",
-  "Черкаська",
-  "Чернігівська",
-  "Волинська",
-  "Рівненська",
-  "Хмельницька",
-  "Житомирська",
-  "Сумська",
-  "Миколаївська",
-  "Херсонська",
-  "Кіровоградська",
-  "Чернівецька",
-];
+const countries = ["Ukraine", "Poland", "Moldova"] as const;
+
+// Regions/states per country — the dropdown updates to match the chosen country.
+const regionsByCountry: Record<string, string[]> = {
+  Ukraine: [
+    "Київська", "Львівська", "Харківська", "Одеська", "Дніпропетровська",
+    "Запорізька", "Вінницька", "Полтавська", "Івано-Франківська", "Тернопільська",
+    "Закарпатська", "Черкаська", "Чернігівська", "Волинська", "Рівненська",
+    "Хмельницька", "Житомирська", "Сумська", "Миколаївська", "Херсонська",
+    "Кіровоградська", "Чернівецька",
+  ],
+  Poland: [
+    "Dolnośląskie", "Kujawsko-Pomorskie", "Lubelskie", "Lubuskie", "Łódzkie",
+    "Małopolskie", "Mazowieckie", "Opolskie", "Podkarpackie", "Podlaskie",
+    "Pomorskie", "Śląskie", "Świętokrzyskie", "Warmińsko-Mazurskie",
+    "Wielkopolskie", "Zachodniopomorskie",
+  ],
+  Moldova: [
+    "Chișinău", "Bălți", "Anenii Noi", "Basarabeasca", "Briceni", "Cahul",
+    "Cantemir", "Călărași", "Căușeni", "Cimișlia", "Criuleni", "Dondușeni",
+    "Drochia", "Dubăsari", "Edineț", "Fălești", "Florești", "Găgăuzia",
+    "Glodeni", "Hîncești", "Ialoveni", "Leova", "Nisporeni", "Ocnița", "Orhei",
+    "Rezina", "Rîșcani", "Sîngerei", "Șoldănești", "Soroca", "Ștefan Vodă",
+    "Strășeni", "Taraclia", "Telenești", "Ungheni",
+  ],
+};
 
 type Carrier = "novaPoshta" | "meest";
 
@@ -274,12 +276,17 @@ export default function CheckoutPage() {
                 <FieldLabel>{t("checkout.country")}</FieldLabel>
                 <select
                   value={form.country}
-                  onChange={(e) => set("country", e.target.value)}
+                  onChange={(e) => {
+                    setForm((f) => ({ ...f, country: e.target.value, region: "" }));
+                    if (errors.region) setErrors((er) => ({ ...er, region: false }));
+                  }}
                   className="h-12 w-full rounded-xl border border-[var(--border)] bg-surface px-3 text-sm outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30"
                 >
-                  <option>Ukraine</option>
-                  <option>Poland</option>
-                  <option>Moldova</option>
+                  {countries.map((c) => (
+                    <option key={c} value={c}>
+                      {c}
+                    </option>
+                  ))}
                 </select>
               </div>
               <div data-error={errors.region ? "true" : undefined}>
@@ -293,7 +300,7 @@ export default function CheckoutPage() {
                   )}
                 >
                   <option value="">—</option>
-                  {regionsUA.map((r) => (
+                  {(regionsByCountry[form.country] ?? []).map((r) => (
                     <option key={r} value={r}>
                       {r}
                     </option>

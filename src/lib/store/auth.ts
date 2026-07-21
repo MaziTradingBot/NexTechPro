@@ -27,6 +27,10 @@ interface AuthState {
   login: (email: string, password: string) => AuthResult;
   loginWithGoogle: () => void;
   logout: () => void;
+  changePassword: (
+    current: string,
+    next: string,
+  ) => { ok: boolean; error?: "not-logged-in" | "google-account" | "wrong-password" | "too-short" };
 }
 
 /**
@@ -81,6 +85,18 @@ export const useAuthStore = create<AuthState>()(
         set({ users: [...get().users, user], user: stripPassword(user) });
       },
       logout: () => set({ user: null }),
+      changePassword: (current, next) => {
+        const u = get().user;
+        if (!u) return { ok: false, error: "not-logged-in" };
+        if (u.provider === "google") return { ok: false, error: "google-account" };
+        if (next.length < 6) return { ok: false, error: "too-short" };
+        const stored = get().users.find((x) => x.id === u.id);
+        if (!stored || stored.password !== current) return { ok: false, error: "wrong-password" };
+        set({
+          users: get().users.map((x) => (x.id === u.id ? { ...x, password: next } : x)),
+        });
+        return { ok: true };
+      },
     }),
     {
       name: "nextech-auth",
