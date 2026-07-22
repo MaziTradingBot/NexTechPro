@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   User,
   Package,
@@ -25,12 +25,16 @@ import {
 import { useAuthStore } from "@/lib/store/auth";
 import { useOrdersStore, type Order } from "@/lib/store/orders";
 import { useCartStore } from "@/lib/store/cart";
+import { useWishlistStore } from "@/lib/store/wishlist";
+import { useRecentlyViewedStore } from "@/lib/store/recentlyViewed";
 import { useToastStore } from "@/lib/store/toast";
+import { useProductsByIds } from "@/lib/useProductsByIds";
 import { useI18n } from "@/lib/i18n/provider";
 import { formatPrice } from "@/lib/format";
 import { useMounted } from "@/lib/useMounted";
 import { cn } from "@/lib/utils";
 import { ChangePasswordForm } from "@/components/account/ChangePasswordForm";
+import { ProductCard } from "@/components/product/ProductCard";
 import type { LucideIcon } from "lucide-react";
 
 type Section = {
@@ -46,25 +50,31 @@ const SECTIONS: Section[] = [
   { id: "orders", labelKey: "account.orders", Icon: Package },
   { id: "messages", labelKey: "account.messages", Icon: MessageSquare, soon: true },
   { id: "offers", labelKey: "account.offers", Icon: Gift, soon: true },
+  { id: "wishlist", labelKey: "account.wishlist", Icon: Heart },
   { id: "basket", labelKey: "account.basket", Icon: ShoppingBag, href: "/cart" },
-  { id: "wishlist", labelKey: "account.wishlist", Icon: Heart, soon: true },
   { id: "comparison", labelKey: "account.comparison", Icon: GitCompare, href: "/compare" },
+  { id: "viewed", labelKey: "account.viewed", Icon: Eye },
   { id: "returns", labelKey: "account.returns", Icon: PackageOpen, soon: true },
-  { id: "viewed", labelKey: "account.viewed", Icon: Eye, soon: true },
   { id: "promotions", labelKey: "account.promotions", Icon: Ticket, soon: true },
   { id: "reviews", labelKey: "account.reviews", Icon: Star, soon: true },
 ];
 
-export default function AccountPage() {
+function AccountContent() {
   const { t, locale } = useI18n();
   const router = useRouter();
+  const params = useSearchParams();
   const mounted = useMounted();
   const user = useAuthStore((s) => s.user);
   const logout = useAuthStore((s) => s.logout);
   const orders = useOrdersStore((s) => s.orders);
   const add = useCartStore((s) => s.add);
   const pushToast = useToastStore((s) => s.push);
-  const [section, setSection] = useState("profile");
+  const wishlistIds = useWishlistStore((s) => s.ids);
+  const viewedIds = useRecentlyViewedStore((s) => s.ids);
+  const initialTab = params.get("tab");
+  const [section, setSection] = useState(
+    initialTab && SECTIONS.some((s) => s.id === initialTab && !s.href) ? initialTab : "profile",
+  );
 
   const reorder = (order: Order) => {
     order.items.forEach((it) => add(it.productId, it.qty));
@@ -241,6 +251,18 @@ export default function AccountPage() {
             </Panel>
           )}
 
+          {section === "wishlist" && (
+            <Panel title={t("account.wishlist")}>
+              <SavedProducts ids={wishlistIds} empty={t("account.wishlistEmpty")} />
+            </Panel>
+          )}
+
+          {section === "viewed" && (
+            <Panel title={t("account.viewed")}>
+              <SavedProducts ids={viewedIds} empty={t("account.viewedEmpty")} />
+            </Panel>
+          )}
+
           {active?.soon && (
             <Panel title={t(active.labelKey)}>
               <div className="flex flex-col items-center py-14 text-center">
@@ -284,5 +306,31 @@ function Field({
         {value}
       </dd>
     </div>
+  );
+}
+
+function SavedProducts({ ids, empty }: { ids: string[]; empty: string }) {
+  const { t } = useI18n();
+  const products = useProductsByIds(ids);
+  if (ids.length === 0 || products?.length === 0) {
+    return <p className="py-10 text-center text-sm text-slate-400">{empty}</p>;
+  }
+  if (products === null) {
+    return <p className="py-10 text-center text-sm text-slate-400">{t("common.loading")}</p>;
+  }
+  return (
+    <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+      {products.map((p) => (
+        <ProductCard key={p.id} product={p} />
+      ))}
+    </div>
+  );
+}
+
+export default function AccountPage() {
+  return (
+    <Suspense fallback={<div className="wrap py-20 text-center text-slate-400">…</div>}>
+      <AccountContent />
+    </Suspense>
   );
 }

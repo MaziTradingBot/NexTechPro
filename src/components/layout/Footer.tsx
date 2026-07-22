@@ -46,20 +46,25 @@ export function Footer() {
           <FooterLink href="#">{t("footer.aboutUs")}</FooterLink>
           <FooterLink href="#">{t("footer.careers")}</FooterLink>
           <FooterLink href="#">{t("footer.blog")}</FooterLink>
-          <FooterLink href="#">{t("footer.contact")}</FooterLink>
+          <FooterLink href="/contact">{t("footer.contact")}</FooterLink>
         </FooterCol>
 
         <FooterCol title={t("footer.help")}>
-          <FooterLink href="#">{t("footer.shipping")}</FooterLink>
-          <FooterLink href="#">{t("footer.returns")}</FooterLink>
-          <FooterLink href="#">{t("footer.warranty")}</FooterLink>
-          <FooterLink href="#">{t("footer.faq")}</FooterLink>
+          <FooterLink href="/support">{t("footer.shipping")}</FooterLink>
+          <FooterLink href="/returns">{t("footer.returns")}</FooterLink>
+          <FooterLink href="/returns">{t("footer.warranty")}</FooterLink>
+          <FooterLink href="/support">{t("footer.faq")}</FooterLink>
         </FooterCol>
       </div>
 
       <div className="border-t border-white/10">
         <div className="wrap flex flex-col items-center justify-between gap-4 py-6 text-sm text-slate-400 sm:flex-row">
           <p>© {year} NexTechPro. {t("footer.rights")}</p>
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
+            <Link href="/privacy" className="hover:text-white">{t("footer.privacy")}</Link>
+            <Link href="/terms" className="hover:text-white">{t("footer.terms")}</Link>
+            <Link href="/returns" className="hover:text-white">{t("footer.returns")}</Link>
+          </div>
           <div className="flex items-center gap-4">
             <span className="flex items-center gap-1.5">
               <ShieldCheck size={16} className="text-brand-400" /> {t("footer.payments")}

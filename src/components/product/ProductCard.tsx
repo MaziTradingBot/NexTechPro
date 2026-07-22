@@ -2,11 +2,12 @@
 
 import Link from "next/link";
 import { motion } from "motion/react";
-import { ShoppingCart, GitCompare, Check } from "lucide-react";
+import { ShoppingCart, GitCompare, Check, Heart } from "lucide-react";
 import type { Product } from "@/lib/data/products";
 import { discountPercent } from "@/lib/format";
 import { useCartStore } from "@/lib/store/cart";
 import { useCompareStore } from "@/lib/store/compare";
+import { useWishlistStore } from "@/lib/store/wishlist";
 import { useToastStore } from "@/lib/store/toast";
 import { useI18n } from "@/lib/i18n/provider";
 import { cn } from "@/lib/utils";
@@ -20,6 +21,8 @@ export function ProductCard({ product }: { product: Product }) {
   const add = useCartStore((s) => s.add);
   const inCompare = useCompareStore((s) => s.ids.includes(product.id));
   const toggleCompare = useCompareStore((s) => s.toggle);
+  const inWishlist = useWishlistStore((s) => s.ids.includes(product.id));
+  const toggleWishlist = useWishlistStore((s) => s.toggle);
   const pushToast = useToastStore((s) => s.push);
   const discount = discountPercent(product.price, product.oldPrice);
   const stock = product.stock ?? 20;
@@ -37,6 +40,12 @@ export function ProductCard({ product }: { product: Product }) {
     e.preventDefault();
     const nowIn = toggleCompare(product.id);
     pushToast(nowIn ? t("common.addedToCompare") : t("common.removedFromCompare"), "info");
+  };
+
+  const handleWishlist = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const nowIn = toggleWishlist(product.id);
+    pushToast(nowIn ? t("common.addedToWishlist") : t("common.removedFromWishlist"), "info");
   };
 
   return (
@@ -58,18 +67,32 @@ export function ProductCard({ product }: { product: Product }) {
             <TagPills tags={product.tags} />
           </div>
 
-          <button
-            onClick={handleCompare}
-            aria-label={t("product.addCompare")}
-            className={cn(
-              "absolute right-3 top-3 grid h-9 w-9 place-items-center rounded-full border backdrop-blur transition",
-              inCompare
-                ? "border-brand-500 bg-brand-600 text-white"
-                : "border-white/15 bg-black/40 text-slate-300 hover:text-brand-400",
-            )}
-          >
-            {inCompare ? <Check size={16} /> : <GitCompare size={16} />}
-          </button>
+          <div className="absolute right-3 top-3 flex flex-col gap-1.5">
+            <button
+              onClick={handleWishlist}
+              aria-label={t("account.wishlist")}
+              className={cn(
+                "grid h-9 w-9 place-items-center rounded-full border backdrop-blur transition",
+                inWishlist
+                  ? "border-rose-500 bg-rose-500 text-white"
+                  : "border-white/15 bg-black/40 text-slate-300 hover:text-rose-400",
+              )}
+            >
+              <Heart size={16} fill={inWishlist ? "currentColor" : "none"} />
+            </button>
+            <button
+              onClick={handleCompare}
+              aria-label={t("product.addCompare")}
+              className={cn(
+                "grid h-9 w-9 place-items-center rounded-full border backdrop-blur transition",
+                inCompare
+                  ? "border-brand-500 bg-brand-600 text-white"
+                  : "border-white/15 bg-black/40 text-slate-300 hover:text-brand-400",
+              )}
+            >
+              {inCompare ? <Check size={16} /> : <GitCompare size={16} />}
+            </button>
+          </div>
         </div>
 
         <div className="flex flex-1 flex-col gap-2 p-4">

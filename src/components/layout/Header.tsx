@@ -8,6 +8,7 @@ import {
   ShoppingCart,
   User,
   GitCompare,
+  Heart,
   Menu,
   X,
   Flame,
@@ -20,6 +21,7 @@ import {
 import { useI18n } from "@/lib/i18n/provider";
 import { useCartItems } from "@/lib/store/cart";
 import { useCompareStore } from "@/lib/store/compare";
+import { useWishlistStore } from "@/lib/store/wishlist";
 import { useAuthStore } from "@/lib/store/auth";
 import { useMounted } from "@/lib/useMounted";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
@@ -66,6 +68,7 @@ export function Header() {
   const items = useCartItems();
   const cartCount = items.reduce((n, i) => n + i.qty, 0);
   const compareCount = useCompareStore((s) => s.ids.length);
+  const wishlistCount = useWishlistStore((s) => s.ids.length);
   const user = useAuthStore((s) => s.user);
 
   const [query, setQuery] = useState("");
@@ -124,6 +127,15 @@ export function Header() {
             <div className="hidden sm:block">
               <LanguageSwitcher />
             </div>
+
+            <Link
+              href="/account?tab=wishlist"
+              className="relative hidden h-10 w-10 place-items-center rounded-lg text-slate-200 hover:bg-white/10 sm:grid"
+              aria-label={t("account.wishlist")}
+            >
+              <Heart size={20} />
+              {mounted && wishlistCount > 0 && <Badge>{wishlistCount}</Badge>}
+            </Link>
 
             <Link
               href="/compare"

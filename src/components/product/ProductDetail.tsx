@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion } from "motion/react";
@@ -16,11 +16,14 @@ import {
   ChevronRight,
   Zap,
   X,
+  Heart,
 } from "lucide-react";
 import type { Product } from "@/lib/data/products";
 import { discountPercent } from "@/lib/format";
 import { useCartStore } from "@/lib/store/cart";
 import { useCompareStore } from "@/lib/store/compare";
+import { useWishlistStore } from "@/lib/store/wishlist";
+import { useRecentlyViewedStore } from "@/lib/store/recentlyViewed";
 import { useToastStore } from "@/lib/store/toast";
 import { useI18n } from "@/lib/i18n/provider";
 import { ProductImage } from "@/components/product/ProductImage";
@@ -36,10 +39,18 @@ export function ProductDetail({ product: p, related }: { product: Product; relat
   const add = useCartStore((s) => s.add);
   const inCompare = useCompareStore((s) => s.ids.includes(p.id));
   const toggleCompare = useCompareStore((s) => s.toggle);
+  const inWishlist = useWishlistStore((s) => s.ids.includes(p.id));
+  const toggleWishlist = useWishlistStore((s) => s.toggle);
+  const addViewed = useRecentlyViewedStore((s) => s.add);
   const pushToast = useToastStore((s) => s.push);
 
   const [qty, setQty] = useState(1);
   const [colorIndex, setColorIndex] = useState(0);
+
+  // Track this product in the customer's "recently viewed" list.
+  useEffect(() => {
+    addViewed(p.id);
+  }, [p.id, addViewed]);
 
   const discount = discountPercent(p.price, p.oldPrice);
   const inStock = (p.stock ?? 1) > 0;
@@ -179,19 +190,34 @@ export function ProductDetail({ product: p, related }: { product: Product; relat
             </button>
           </div>
 
-          <button
-            onClick={() => {
-              const nowIn = toggleCompare(p.id);
-              pushToast(nowIn ? t("common.addedToCompare") : t("common.removedFromCompare"), "info");
-            }}
-            className={cn(
-              "mt-3 inline-flex items-center gap-2 text-sm font-medium transition",
-              inCompare ? "text-brand-300" : "text-slate-400 hover:text-brand-300",
-            )}
-          >
-            {inCompare ? <Check size={16} /> : <GitCompare size={16} />}
-            {inCompare ? t("product.inCompare") : t("product.addCompare")}
-          </button>
+          <div className="mt-3 flex flex-wrap items-center gap-5">
+            <button
+              onClick={() => {
+                const nowIn = toggleWishlist(p.id);
+                pushToast(nowIn ? t("common.addedToWishlist") : t("common.removedFromWishlist"), "info");
+              }}
+              className={cn(
+                "inline-flex items-center gap-2 text-sm font-medium transition",
+                inWishlist ? "text-rose-400" : "text-slate-400 hover:text-rose-400",
+              )}
+            >
+              <Heart size={16} fill={inWishlist ? "currentColor" : "none"} />
+              {t("account.wishlist")}
+            </button>
+            <button
+              onClick={() => {
+                const nowIn = toggleCompare(p.id);
+                pushToast(nowIn ? t("common.addedToCompare") : t("common.removedFromCompare"), "info");
+              }}
+              className={cn(
+                "inline-flex items-center gap-2 text-sm font-medium transition",
+                inCompare ? "text-brand-300" : "text-slate-400 hover:text-brand-300",
+              )}
+            >
+              {inCompare ? <Check size={16} /> : <GitCompare size={16} />}
+              {inCompare ? t("product.inCompare") : t("product.addCompare")}
+            </button>
+          </div>
 
           <div className="mt-7 grid gap-3 rounded-2xl border border-white/10 bg-surface p-4 sm:grid-cols-3">
             <Badge icon={<Truck size={18} />} text={t("product.delivery")} />
